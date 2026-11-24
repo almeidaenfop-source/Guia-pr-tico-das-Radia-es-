@@ -1,0 +1,3008 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manual NBQR, Radiações e TCCC — Módulos 1 a 8 + Show da Radiação</title>
+  <style>
+    :root {
+      --bg-main: #070d16;
+      --bg-panel: #0e1827;
+      --bg-card: #132033;
+      --bg-card-hover: #192a42;
+      --border: #233652;
+      --accent: #1ea7fd;
+      --accent-soft: rgba(30, 167, 253, 0.14);
+      --gold: #f5b924;
+      --gold-soft: rgba(245, 185, 36, 0.14);
+      --danger: #ef4444;
+      --danger-soft: rgba(239, 68, 68, 0.14);
+      --success: #10b981;
+      --success-soft: rgba(16, 185, 129, 0.14);
+      --warn: #f97316;
+      --warn-soft: rgba(249, 115, 22, 0.14);
+      --text: #eef4fc;
+      --text-muted: #9eb2cc;
+      --radius: 14px;
+      --shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, sans-serif;
+      background: radial-gradient(circle at top, #102038 0%, var(--bg-main) 58%);
+      color: var(--text);
+      line-height: 1.58;
+      min-height: 100vh;
+      padding-bottom: 56px;
+    }
+
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 18px 16px 44px;
+    }
+
+    header.app-header {
+      background: linear-gradient(135deg, #0d1a2d 0%, #091220 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .header-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    header.app-header h1 {
+      font-size: clamp(1.3rem, 2.8vw, 1.9rem);
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+    }
+
+    .badge-offline {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .header-sub {
+      color: var(--text-muted);
+      font-size: 0.94rem;
+    }
+
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    @media (min-width: 560px) {
+      .nav-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (min-width: 900px) {
+      .nav-grid {
+        grid-template-columns: repeat(6, 1fr);
+      }
+    }
+
+    .nav-btn {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 12px 10px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 64px;
+    }
+
+    .nav-btn:hover {
+      background: var(--bg-card-hover);
+      border-color: #385580;
+      transform: translateY(-1px);
+    }
+
+    .nav-btn.active {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: #63beff;
+      box-shadow: 0 6px 18px rgba(30, 167, 253, 0.35);
+    }
+
+    .nav-btn.game-btn {
+      border-color: rgba(245, 185, 36, 0.55);
+      color: var(--gold);
+    }
+
+    .nav-btn.game-btn.active {
+      background: var(--gold);
+      color: #09101a;
+      border-color: #ffe07d;
+      box-shadow: 0 6px 18px rgba(245, 185, 36, 0.35);
+    }
+
+    .panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .module-title {
+      font-size: clamp(1.25rem, 2.4vw, 1.6rem);
+      font-weight: 800;
+      color: #56b9ff;
+      margin-bottom: 8px;
+    }
+
+    .module-lead {
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      margin-bottom: 16px;
+    }
+
+    .aph-quick-box {
+      background: linear-gradient(90deg, rgba(30, 167, 253, 0.14), rgba(245, 185, 36, 0.10));
+      border: 1px solid rgba(86, 185, 255, 0.38);
+      border-left: 4px solid var(--accent);
+      border-radius: 12px;
+      padding: 13px 15px;
+      margin-bottom: 16px;
+      font-size: 0.91rem;
+    }
+
+    .aph-quick-box strong {
+      color: #7dd3fc;
+    }
+
+    .attr-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .attr-pill {
+      background: #0b1422;
+      border: 1px solid #263c5e;
+      border-radius: 8px;
+      padding: 7px 9px;
+      font-size: 0.8rem;
+    }
+
+    .attr-pill span {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .card:last-child {
+      margin-bottom: 0;
+    }
+
+    .card h3 {
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      color: #dce7f5;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+
+    .card p:last-child {
+      margin-bottom: 0;
+    }
+
+    ul.clean-list {
+      padding-left: 18px;
+      color: #dce7f5;
+    }
+
+    ul.clean-list li {
+      margin-bottom: 7px;
+      font-size: 0.94rem;
+    }
+
+    .rule-banner {
+      background: linear-gradient(90deg, rgba(239, 68, 68, 0.2), rgba(245, 185, 36, 0.14));
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      border-left: 5px solid var(--danger);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 16px;
+    }
+
+    .rule-banner h3 {
+      color: #fca5a5;
+      font-size: 1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 6px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 780px) {
+      .grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+      .grid-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .do-box {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .do-box h4 {
+      color: #34d399;
+      font-size: 0.92rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .dont-box {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .dont-box h4 {
+      color: #f87171;
+      font-size: 0.92rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .pill-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .pill-btn:hover {
+      border-color: var(--accent);
+      background: var(--bg-card-hover);
+    }
+
+    .pill-btn.active {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-top: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 660px;
+      background: var(--bg-card);
+    }
+
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: #17273f;
+      color: #84ccff;
+      font-weight: 800;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .mobile-mouche-cards {
+      display: none;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 720px) {
+      .mouche-table-wrap {
+        display: none;
+      }
+      .mobile-mouche-cards {
+        display: block;
+      }
+    }
+
+    .sim-box {
+      background: #0b1422;
+      border: 1px solid #2b4469;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .sim-box h3 {
+      color: #7cc6ff;
+      font-size: 1.06rem;
+      margin-bottom: 6px;
+    }
+
+    .sim-visual {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      background: #070d17;
+      border: 1px solid #1e314d;
+      border-radius: 10px;
+      padding: 14px;
+      margin: 12px 0;
+    }
+
+    .sim-node {
+      flex: 1;
+      min-width: 145px;
+      text-align: center;
+      padding: 10px;
+      border-radius: 8px;
+      background: #112036;
+      border: 1px solid #294163;
+      font-size: 0.86rem;
+    }
+
+    .beam-arrow {
+      font-weight: 900;
+      font-size: 1.1rem;
+      color: #38bdf8;
+      padding: 0 4px;
+      user-select: none;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 16px;
+      background: #060b13;
+      border: 1px solid #253b5c;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 8px 0 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444);
+      transition: width 0.14s ease;
+    }
+
+    .sim-status {
+      font-weight: 700;
+      padding: 11px 14px;
+      border-radius: 8px;
+      font-size: 0.91rem;
+      margin-top: 8px;
+    }
+
+    .status-blocked {
+      background: rgba(16, 185, 129, 0.16);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .status-attenuated {
+      background: rgba(245, 158, 11, 0.16);
+      color: #fcd34d;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+
+    .status-penetrating {
+      background: rgba(239, 68, 68, 0.16);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: #0d192b;
+      border: 1px solid #274063;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+    }
+
+    .alpha-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .alpha-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .alpha-btn.active, .alpha-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .glossary-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+
+    .glossary-term {
+      font-weight: 800;
+      color: #67c2ff;
+      font-size: 0.98rem;
+      margin-bottom: 4px;
+    }
+
+    .glossary-def {
+      color: #dce7f5;
+      font-size: 0.92rem;
+    }
+
+    input[type="text"], input[type="number"], select, textarea {
+      width: 100%;
+      background: #09111d;
+      border: 1px solid #2b4366;
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.94rem;
+      font-family: inherit;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    label {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .action-btn {
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: filter 0.15s ease;
+    }
+
+    .action-btn:hover {
+      filter: brightness(1.08);
+    }
+
+    .action-btn.secondary {
+      background: #1f3352;
+      color: #e6f0fc;
+      border: 1px solid #355482;
+    }
+
+    .action-btn.gold {
+      background: var(--gold);
+      color: #0b111b;
+    }
+
+    .game-hud {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .hud-box {
+      background: #0a1220;
+      border: 1px solid #283f61;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .hud-label {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .hud-val {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: var(--gold);
+      margin-top: 2px;
+    }
+
+    .hud-val.timer-danger {
+      color: #f87171;
+      animation: pulseTimer 0.4s infinite alternate;
+    }
+
+    @keyframes pulseTimer {
+      from { transform: scale(1); }
+      to { transform: scale(1.08); }
+    }
+
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      background: #101d30;
+      border: 1px solid #2a4366;
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin-bottom: 9px;
+      font-size: 0.94rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background: #172942;
+      border-color: var(--accent);
+    }
+
+    .option-btn.correct {
+      background: rgba(16, 185, 129, 0.22);
+      border-color: #10b981;
+      color: #a7f3d0;
+    }
+
+    .option-btn.wrong {
+      background: rgba(239, 68, 68, 0.22);
+      border-color: #ef4444;
+      color: #fecaca;
+    }
+
+    .contact-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .media-item {
+      background: #0a1220;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px;
+    }
+
+    .media-item img, .media-item video {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 8px;
+      display: block;
+    }
+
+    .checklist-box {
+      background: #08101c;
+      border: 1px solid #233857;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 7px 4px;
+      border-bottom: 1px solid rgba(35, 54, 82, 0.55);
+      font-size: 0.91rem;
+      cursor: pointer;
+    }
+
+    .checklist-item:last-child {
+      border-bottom: none;
+    }
+
+    .checklist-item input {
+      margin-top: 3px;
+      width: auto;
+      accent-color: var(--success);
+      cursor: pointer;
+    }
+
+    .nuclide-detail {
+      background: #091322;
+      border: 1px solid #2b476e;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 10px;
+    }
+
+    .nuclide-grid-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .nuclide-meta-box {
+      background: #0e1b2e;
+      border: 1px solid #223857;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 0.88rem;
+    }
+
+    .nuclide-meta-box span {
+      display: block;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      background: #0f2942;
+      color: #ffffff;
+      border: 1px solid #38a8ff;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="app-header">
+      <div class="header-top">
+        <h1>Manual NBQR, Radiações e TCCC — Módulos 1 a 8 + Show da Radiação</h1>
+        <span class="badge-offline">ARQUIVO ÚNICO • OFFLINE APÓS CARREGAR / SALVAR</span>
+      </div>
+      <p class="header-sub">
+        Plataforma didático-operacional para saúde (Forças Armadas, Forças Auxiliares, SAMU e APH), baseada na proposta de POP e dosimetria retrospectiva de 1° SG-FN-ENF Almeida, IAEA, REMM e CNEN.
+      </p>
+    </header>
+
+    <nav class="nav-grid" aria-label="Navegação dos Módulos">
+      <button class="nav-btn active" data-tab="m1" onclick="switchModuleTab('m1')">M1 • Bases Físicas e Tipos de Radiação</button>
+      <button class="nav-btn" data-tab="m2" onclick="switchModuleTab('m2')">M2 • Atendimento Inicial e Condutas em Campo</button>
+      <button class="nav-btn" data-tab="m3" onclick="switchModuleTab('m3')">M3 • Dosimetria, Conversores e Cadeia de Custódia</button>
+      <button class="nav-btn" data-tab="m4" onclick="switchModuleTab('m4')">M4 • Antídotos, Decorporantes e SAR / SCR</button>
+      <button class="nav-btn" data-tab="m5" onclick="switchModuleTab('m5')">M5 • TCCC QBRN, MARCHE² e Cenário Tático</button>
+      <button class="nav-btn" data-tab="m6" onclick="switchModuleTab('m6')">M6 • EPI, Níveis MOPP e Proteção Operacional</button>
+      <button class="nav-btn" data-tab="m7" onclick="switchModuleTab('m7')">M7 • Registros Operacionais e Fichas POP</button>
+      <button class="nav-btn" data-tab="m8" onclick="switchModuleTab('m8')">M8 • Glossário Técnico NBQR e Radioproteção</button>
+      <button class="nav-btn game-btn" data-tab="game" onclick="switchModuleTab('game')">☢️ Show da Radiação (Quiz Interativo)</button>
+      <button class="nav-btn" data-tab="autor" onclick="switchModuleTab('autor')">Trajetória do Autor</button>
+      <button class="nav-btn" data-tab="contato" onclick="switchModuleTab('contato')">Fale Conosco e Canais Diretos</button>
+    </nav>
+
+    <!-- MÓDULO 1 -->
+    <section id="tab-m1" class="panel tab-section">
+      <h2 class="module-title">M1 • Bases Físicas e Tipos de Radiação</h2>
+      <p class="module-lead">
+        Fundamentos físicos das radiações ionizantes, interação com a matéria, grandezas dosimétricas, síndromes agudas, emergência radiológica vs. nuclear e distinção operacional entre irradiação e contaminação.
+      </p>
+
+      <div class="aph-quick-box">
+        <strong>Consulta Rápida APH / Saúde:</strong> Sem som, cheiro ou alteração visual imediata. Em emergências com múltiplas vítimas, não rebaixe prioridade vital apenas por contaminação e não atrase suporte vital (ABCDE / MARCHE²) para concluir descontaminação.
+      </div>
+
+      <!-- Simulador Interativo em Tempo Real no Topo do Módulo 1 -->
+      <div class="sim-box">
+        <h3>Simulador Interativo em Tempo Real: Penetração, Distância e Blindagem</h3>
+        <p style="color:var(--text-muted); font-size:0.89rem; margin-bottom:10px;">
+          <em>Simulador didático e conceitual:</em> ajusta comportamento ilustrativo conforme tipo de radiação, barreira, espessura (0 a 50 mm), distância (5 a 300 cm) e energização de Raios X (na prática real intervêm energia do feixe, interações como efeito fotoelétrico/Compton/produção de pares, bremsstrahlung e nêutrons/ativação quando presentes).
+        </p>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="m1RadType">Tipo de Radiação / Fonte</label>
+            <select id="m1RadType" onchange="updateM1RealtimeSim()">
+              <option value="alpha">Partícula Alfa (α)</option>
+              <option value="beta">Partícula Beta (β)</option>
+              <option value="gamma">Radiação Gama (γ)</option>
+              <option value="xray">Raios X (Gerador Elétrico)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="m1Material">Material da Barreira</label>
+            <select id="m1Material" onchange="updateM1RealtimeSim()">
+              <option value="ar">Ar</option>
+              <option value="papel">Papel</option>
+              <option value="aluminio_vidro">Alumínio / Vidro</option>
+              <option value="chumbo">Chumbo</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="m1XrayControl" class="toggle-row" style="display:none;">
+          <div>
+            <strong style="color:#7dd3fc;">Estado do Equipamento de Raios X:</strong>
+            <span id="m1XrayStateLabel" style="margin-left:6px; font-weight:800; color:#34d399;">ENERGIZADO (Emitindo RX)</span>
+          </div>
+          <button type="button" class="action-btn secondary" id="m1XrayToggleBtn" onclick="toggleXrayState()">Alternar Energizado / Desligado</button>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="m1Thickness">Espessura da Barreira: <strong id="m1ThicknessVal" style="color:#67c2ff;">10 mm</strong></label>
+            <input type="range" id="m1Thickness" min="0" max="50" step="1" value="10" oninput="updateM1RealtimeSim()" />
+          </div>
+
+          <div class="form-group">
+            <label for="m1Distance">Distância da Fonte: <strong id="m1DistanceVal" style="color:#67c2ff;">50 cm</strong></label>
+            <input type="range" id="m1Distance" min="5" max="300" step="5" value="50" oninput="updateM1RealtimeSim()" />
+          </div>
+        </div>
+
+        <div class="sim-visual">
+          <div class="sim-node" id="m1NodeSource">
+            <strong>Fonte</strong><br/>Partícula Alfa (α)
+          </div>
+          <div class="beam-arrow" id="m1Beam1">━━▶</div>
+          <div class="sim-node" id="m1NodeShield">
+            <strong>Barreira</strong><br/>Ar (10 mm)<br/><span style="color:var(--text-muted); font-size:0.78rem;">Dist.: 50 cm</span>
+          </div>
+          <div class="beam-arrow" id="m1Beam2">━━▶</div>
+          <div class="sim-node" id="m1NodeTarget">
+            <strong>Alvo / Detector</strong><br/>Transmitido: 0.0%
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.9rem; font-weight:700;">
+          <span>Porcentagem Transmitida ao Alvo/Detector:</span>
+          <span id="m1TransmittedPct" style="color:#f5b924; font-size:1.05rem;">0.0%</span>
+        </div>
+        <div class="progress-track">
+          <div id="m1ProgressFill" class="progress-fill"></div>
+        </div>
+
+        <div id="m1SimStatus" class="sim-status status-blocked"></div>
+      </div>
+
+      <div class="rule-banner">
+        <h3>Regra de Ouro da Resposta a Emergências Radiológicas</h3>
+        <p>
+          <strong>A VIDA DA VÍTIMA VEM SEMPRE EM PRIMEIRO LUGAR.</strong> Nenhuma coleta de objeto, busca por dosímetros fortuitos ou preenchimento de fichas periciais pode atrasar ou interromper o suporte imediato à vida (ABCDE / MARCHE²), o controle de hemorragias exsanguinantes ou a descontaminação emergencial. A preservação dosimétrica só faz sentido se o paciente sobreviver ao trauma agudo, devendo ocorrer em paralelo com ajustes rápidos sem atrasar o socorro.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Partícula ALFA (α)</h3>
+          <p>
+            É a maior partícula de radiação ionizante; percorre apenas poucos centímetros no ar, no máximo de 10 a 18 cm, não ultrapassa a camada córnea da pele humana — ou seja, a mais superficial — e pode ter sua progressão impedida até por uma folha de papel.
+          </p>
+          <p>
+            Quando fora do corpo humano oferece menor perigo à saúde, porém apresenta grande radiotoxicidade quando o elemento radioativo é inserido no organismo por ingestão ou inalação. Suas fontes de radiação externa não apresentam riscos relevantes devido à sua baixa capacidade de alcance e penetração.
+          </p>
+          <div class="attr-strip">
+            <div class="attr-pill"><span>Alcance no Ar</span>Máx. 10–18 cm</div>
+            <div class="attr-pill"><span>Risco Externo</span>Baixo (pele íntegra)</div>
+            <div class="attr-pill"><span>Risco Interno</span>Muito alto (inalação/ingestão)</div>
+            <div class="attr-pill"><span>Blindagem</span>Papel / camada córnea</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Partícula BETA (β)</h3>
+          <p>
+            Possui maior penetração que as partículas alfa; tem radiotoxicidade quando o elemento responsável pela radiação é inserido no organismo por inalação ou ingestão, ou também por meio de radiação externa, mas não penetra suficientemente para atingir órgãos mais internos do corpo.
+          </p>
+          <p>
+            Pode causar danos à pele e, quando atinge os olhos, lesa o cristalino ocular. Pode ser blindada por material denso como vidro ou alumínio.
+          </p>
+          <div class="attr-strip">
+            <div class="attr-pill"><span>Alcance</span>Maior que alfa; superficial</div>
+            <div class="attr-pill"><span>Risco Externo</span>Pele e cristalino ocular</div>
+            <div class="attr-pill"><span>Risco Interno</span>Relevante se incorporado</div>
+            <div class="attr-pill"><span>Blindagem</span>Vidro / alumínio / acrílico</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Radiação GAMA (γ)</h3>
+          <p>
+            Os raios gama, semelhantes à radiação X, são radiações eletromagnéticas de alta energia (fótons) com pequeno comprimento de onda e alta frequência, com alto grau de penetração no organismo, podendo irradiar pessoas e objetos a vários metros de distância com radiotoxicidade interna e externa.
+          </p>
+          <div class="attr-strip">
+            <div class="attr-pill"><span>Natureza</span>Fótons (alta penetração)</div>
+            <div class="attr-pill"><span>Alcance</span>Vários metros / profundo</div>
+            <div class="attr-pill"><span>Proteção</span>Tempo, distância, blindagem</div>
+            <div class="attr-pill"><span>Blindagem Típica</span>Materiais densos (ex.: chumbo)</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Fontes de RX</h3>
+          <p>
+            Fontes de raios X só são emissoras de radiações ionizantes no momento da realização de exames, por serem ativadas eletricamente, não apresentando emissão quando desligadas.
+          </p>
+          <div class="attr-strip">
+            <div class="attr-pill"><span>Emissão</span>Apenas quando energizado</div>
+            <div class="attr-pill"><span>Desligado</span>Sem emissão ionizante</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Nêutrons e Ativação Induzida</h3>
+          <p>
+            Partículas subatômicas sem carga elétrica presentes em determinados campos e ambientes nucleares. Exigem avaliação radiológica especializada e podem associar-se à <strong>ativação induzida</strong> de materiais ou estruturas em campos intensos, demandando cautela adicional em cenários de exposição mista.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Emergência Radiológica vs. Emergência Nuclear</h3>
+          <p>
+            <strong>Emergência Radiológica:</strong> envolve fontes ou materiais radioativos fora de controle (incluindo acidentes industriais, fontes seladas ou Dispositivos de Dispersão Radiológica / DDR — "bomba suja"), sem reator nuclear em operação.
+          </p>
+          <p>
+            <strong>Emergência Nuclear:</strong> envolve instalações, reatores ou materiais nucleares com risco de liberação ou exposição radiológica.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Decaimento Radioativo ou Meia-Vida</h3>
+          <p>
+            A atividade da amostra radioativa apresenta uma taxa de diminuição ou decaimento de emissão de radiação fixa, característica para cada radioisótopo. O tempo necessário para que a atividade de uma amostra radioativa se reduza à metade do seu valor inicial é denominado meia-vida.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Dose Absorvida e Grandezas</h3>
+          <p>
+            É a grandeza medida pelo quociente da energia transferida pela radiação ionizante (fótons e/ou partículas) ao volume contido na matéria, mensurada em <strong>rad</strong> (unidade antiga) ou <strong>Gray (Gy)</strong>.
+          </p>
+          <p>
+            O Gray (Gy) é a unidade do Sistema Internacional de Unidades (SI) de dose absorvida (1 Gy = 1 J/kg; 1 Gy = 100 rad). Já o <strong>Becquerel (Bq)</strong> mede atividade (transformações/s; 1 Ci = 3,7 × 10¹⁰ Bq) e o <strong>Sievert (Sv)</strong> aplica-se a grandezas de proteção radiológica com fatores de ponderação — não sendo intercambiáveis diretamente sem identificar grandeza e contexto.
+          </p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Radiações Ionizantes e Efeitos Biológicos (Determinísticos vs. Estocásticos)</h3>
+        <p>
+          As radiações chamadas "ionizantes" são aquelas que possuem energia suficiente para liberar elétrons da camada orbital de um átomo, criando assim um par de íons (elétron ejetado e o restante do átomo).
+        </p>
+        <p>
+          Os efeitos biológicos dividem-se em <strong>reações teciduais / determinísticos</strong> (com limiar de dose e gravidade dependente da dose, como SAR e SCR) e <strong>estocásticos</strong> (probabilísticos, cuja probabilidade depende da dose).
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Síndrome Cutânea da Radiação — SCR</h3>
+          <p>
+            É um conjunto de manifestações decorrentes de alterações patológicas na pele e em estruturas subjacentes, produzidas pela absorção de doses de radiação ionizante acima de determinados limiares, provenientes de uma fonte situada externamente ao corpo.
+          </p>
+          <p>
+            Pode evoluir por eritema precoce transitório, fase latente, fase clínica/de estado e evolução tardia, com dor, edema, epilação, epitelite seca ou exsudativa, flictenas, ulceração e necrose, devendo ser diferenciada de queimaduras térmicas ou químicas.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Síndrome Aguda da Radiação — SAR</h3>
+          <p>
+            Consiste em uma constelação de manifestações clínicas e laboratoriais decorrentes da irradiação externa do corpo, de modo agudo, relativamente homogêneo e acima do limiar de dose para este efeito (em torno de 1 Gy). Há três formas de SAR: <strong>hematopoiética ou hematológica</strong> (limiar de dose em torno de 1 Gy), <strong>gastrointestinal</strong> (limiar de dose entre 8–10 Gy) e <strong>neurovascular ou cerebrovascular</strong> (limiar de dose acima de 20 Gy).
+          </p>
+          <p>
+            Costuma evoluir em fases <strong>prodrômica</strong> (náuseas, vômitos, anorexia, astenia, cefaleia, diarreia), <strong>latente</strong> (melhora transitória aparente), <strong>manifesta/estado</strong> e <strong>recuperação ou óbito</strong>.
+          </p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Distinção Operacional: Irradiação Externa, Contaminação Externa e Contaminação Interna</h3>
+        <ul class="clean-list">
+          <li><strong>Irradiação Externa:</strong> Exposição a campo de radiação (gama, raios X, nêutrons) sem incorporação ou deposição de material radioativo sobre o corpo. Em raios X/gama sem contaminação associada, o paciente não transmite contaminação à equipe; em campos intensos de nêutrons, avaliar possível ativação induzida.</li>
+          <li><strong>Contaminação Externa:</strong> Deposição de material radioativo (pó, líquido ou aerossol) sobre pele, cabelos ou vestimentas. A remoção de roupas reduz grande parte da contaminação externa (&gt; 90%), seguida de lavagem com água morna e sabão neutro sem abrasão ou hipotermia.</li>
+          <li><strong>Contaminação Interna:</strong> Incorporação de radionuclídeos por inalação, ingestão, ferimentos abertos ou absorção cutânea. Requer proteção respiratória da equipe, avaliação clínica/bioanálise especializada e terapia de decorporação quando indicada.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- MÓDULO 2 -->
+    <section id="tab-m2" class="panel tab-section" style="display:none;">
+      <h2 class="module-title">M2 • Atendimento Inicial e Condutas em Campo</h2>
+      <p class="module-lead">
+        Resumo de pontos de atenção por perfil profissional e cartões operacionais de consulta rápida ("O Que Fazer" vs. "O Que EVITAR") para equipes de saúde, APH/SAMU, Forças Armadas e Auxiliares.
+      </p>
+
+      <div class="aph-quick-box">
+        <strong>Consulta Rápida APH / Emergência:</strong> Prioridade absoluta ao suporte vital (ABCDE / MARCHE²). Na descontaminação, remova roupas, use água morna e sabão neutro sem esfregar com força, previna hipotermia e, se houver pó/particulado e não puder retirar a roupa de imediato, umedeça de forma controlada e cautelosa para reduzir ressuspensão aérea.
+      </div>
+
+      <div class="filter-bar" role="tablist" aria-label="Filtrar por Perfil Profissional">
+        <button class="pill-btn active" data-role="all" onclick="filterRole('all', this)">Todos os Perfis</button>
+        <button class="pill-btn" data-role="medicos" onclick="filterRole('medicos', this)">1. Médicos</button>
+        <button class="pill-btn" data-role="enfermeiros" onclick="filterRole('enfermeiros', this)">2. Enfermeiros</button>
+        <button class="pill-btn" data-role="tecnicos" onclick="filterRole('tecnicos', this)">3. Técnicos de Enfermagem</button>
+        <button class="pill-btn" data-role="socorristas" onclick="filterRole('socorristas', this)">4. Socorristas / Primeiros Respondedores</button>
+      </div>
+
+      <div id="roleCardsContainer">
+        <div class="card role-card" data-role="medicos">
+          <h3>1. Médicos (Emergencistas, Cirurgiões, Intensivistas)</h3>
+          <ul class="clean-list">
+            <li>Diagnosticar precocemente lesões combinadas e garantir que cirurgias primárias ocorram nas primeiras 36–48 horas.</li>
+            <li>Registrar o horário exato do início dos vômitos para estimativa de dose pelo marcador <em>Time to Emesis</em>.</li>
+            <li>Prescrever antídotos e decorporantes específicos (KI, Azul da Prússia, DTPA, Bicarbonato) conforme o radionuclídeo.</li>
+            <li>Solicitar hemograma com contagem de linfócitos a cada 6–8h e biodosimetria citogenética (cromossomos dicêntricos).</li>
+          </ul>
+        </div>
+
+        <div class="card role-card" data-role="enfermeiros">
+          <h3>2. Enfermeiros (Coordenadores de Triagem e Descontaminação)</h3>
+          <ul class="clean-list">
+            <li>Gerenciar o fluxo de triagem primária (START) e secundária (TRTS) no Posto de Saúde Avançado (PSA), sem rebaixar prioridade vital apenas por contaminação.</li>
+            <li>Supervisionar a estação de descontaminação cutânea na Zona Morna, garantindo água morna e sabão neutro.</li>
+            <li>Implementar medidas rigorosas de prevenção de hipotermia secundária à lavagem com água.</li>
+            <li>Coletar swabs nasais/orais na 1ª hora pós-evento (quando indicado/avaliado) e acondicionar roupas/pertences em sacos/invólucros adequados após estabilização.</li>
+          </ul>
+        </div>
+
+        <div class="card role-card" data-role="tecnicos">
+          <h3>3. Técnicos de Enfermagem</h3>
+          <ul class="clean-list">
+            <li>Executar paramentação e desparamentação rigorosa de EPI (Nível C na Zona Morna; Nível D na Zona Fria).</li>
+            <li>Realizar lavagem cutânea controlada do paciente e irrigação abundante de feridas com soro fisiológico.</li>
+            <li>Substituir torniquetes provisórios colocados sobre a roupa por torniquetes limpos aplicados diretamente na pele.</li>
+            <li>Monitorar sinais vitais e prestar cuidados não abrasivos em queimaduras radiológicas ou lesões cutâneas.</li>
+          </ul>
+        </div>
+
+        <div class="card role-card" data-role="socorristas">
+          <h3>4. Socorristas / Primeiros Respondedores</h3>
+          <ul class="clean-list">
+            <li>Avaliar a segurança da cena e estabelecer postos obrigatoriamente contra o vento (<em>upwind</em>) e em local elevado (<em>uphill</em>).</li>
+            <li>Colocar máscara de proteção respiratória imediatamente ao adentrar áreas de risco.</li>
+            <li>Solicitar socorro especializado: identificar qual é a ameaça real e quantas vítimas existem; avaliar se há atentado, infiltração, ato fortuito, incêndio, alagamento, curto-circuito, fumaça etc.</li>
+            <li>Estancar hemorragias massivas com torniquetes táticos de extremidade.</li>
+            <li>Executar a extração tática rápida da vítima para a Zona Morna e realizar descontaminação pontual de emergência (incluindo umedecimento cauteloso de particulados se não puder retirar a roupa de imediato).</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 class="module-title" style="font-size: 1.25rem; margin-top: 20px;">Cartões de Consulta Rápida ("O Que Fazer" vs. "O Que EVITAR")</h3>
+
+      <div class="card">
+        <h3>CARD OPERACIONAL 1: SEGURANÇA DA CENA E PROTEÇÃO DA EQUIPE</h3>
+        <div class="grid-2">
+          <div class="do-box">
+            <h4>O QUE FAZER</h4>
+            <ul class="clean-list">
+              <li><strong>Ação:</strong> Posicionar o PSA e a Área de Descontaminação contra o vento (<em>upwind</em>) e em local elevado (<em>uphill</em>).</li>
+              <li><strong>Ação:</strong> Paramentar EPI adequado ao risco (Nível C na Zona Morna; Nível D no PSA limpo).</li>
+              <li><strong>Ação:</strong> Aplicar a Regra de Ouro: O suporte vital (ABCDE / MARCHE²) antecede a descontaminação e a dosimetria.</li>
+              <li><strong>Ação:</strong> Utilizar luvas duplas/triplas de nitrila e descartar a camada externa a cada 20 minutos.</li>
+            </ul>
+          </div>
+          <div class="dont-box">
+            <h4>O QUE EVITAR</h4>
+            <ul class="clean-list">
+              <li><strong>Erro:</strong> NUNCA adiar manobras de ressuscitação ou controle de hemorragias para lavar o paciente.</li>
+              <li><strong>Erro:</strong> NUNCA entrar na Zona Quente sem proteção respiratória adequada.</li>
+              <li><strong>Erro:</strong> NUNCA friccionar a pele do paciente com escovas duras ou substâncias abrasivas.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>CARD OPERACIONAL 2: DESCONTAMINAÇÃO E MANEJO DE PERTENCES</h3>
+        <div class="grid-2">
+          <div class="do-box">
+            <h4>O QUE FAZER</h4>
+            <ul class="clean-list">
+              <li><strong>Ação:</strong> Remover todas as vestimentas da vítima na Zona Morna (elimina mais de 90% da contaminação externa).</li>
+              <li><strong>Ação:</strong> Lavar a pele íntegra com água morna e sabão neutro; irrigar feridas com soro fisiológico.</li>
+              <li><strong>Ação:</strong> Coletar swabs nasais na 1ª hora pós-evento para avaliar contaminação inalatória.</li>
+              <li><strong>Ação:</strong> Acondicionar pertences fortuitos de interesse dosimétrico em invólucro opaco e seco (após estabilidade clínica, segurança e atribuições).</li>
+            </ul>
+          </div>
+          <div class="dont-box">
+            <h4>O QUE EVITAR</h4>
+            <ul class="clean-list">
+              <li><strong>Erro:</strong> NUNCA expor objetos de dosimetria retrospectiva à luz solar (<em>bleaching</em> ótico) ou ao calor (<em>fading</em> térmico).</li>
+              <li><strong>Erro:</strong> NUNCA realizar lavagem ou gargarejos profundos em cavidade oral/nasal (risco de ingestão).</li>
+              <li><strong>Erro:</strong> NUNCA permitir hipotermia durante a lavagem com água na descontaminação.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>CARD OPERACIONAL 3: FLUXO CLÍNICO E LESÕES COMBINADAS</h3>
+        <div class="grid-2">
+          <div class="do-box">
+            <h4>O QUE FAZER</h4>
+            <ul class="clean-list">
+              <li><strong>Ação:</strong> Executar o protocolo (MARCHE)² e registrar a hora exata do início dos vômitos (<em>Time to Emesis</em>).</li>
+              <li><strong>Ação:</strong> Coletar Hemograma Completo com contagem de linfócitos a cada 6 a 8 horas.</li>
+              <li><strong>Ação:</strong> Encaminhar pacientes com lesões combinadas para cirurgia primária nas primeiras 36–48 horas.</li>
+              <li><strong>Ação:</strong> Administrar antídotos específicos (KI para Iodo-131, Azul da Prússia para Césio-137, Ca-DTPA para Plutônio).</li>
+            </ul>
+          </div>
+          <div class="dont-box">
+            <h4>O QUE EVITAR</h4>
+            <ul class="clean-list">
+              <li><strong>Erro:</strong> NUNCA realizar cirurgias eletivas/reparadoras no período de mielossupressão (dias 3 a 50).</li>
+              <li><strong>Erro:</strong> NUNCA usar dados isolados de dosimetria de pertences para definir prognóstico ou conduta médica.</li>
+              <li><strong>Erro:</strong> NUNCA considerar o paciente irradiado externamente como fonte de contaminação radioativa.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MÓDULO 3 -->
+    <section id="tab-m3" class="panel tab-section" style="display:none;">
+      <h2 class="module-title">M3 • Dosimetria, Conversores e Cadeia de Custódia</h2>
+      <p class="module-lead">
+        Conversores bidirecionais REMM / SI, estimador clínico por <em>Time to Emesis</em>, física de estado sólido (OSL/TL/EPR), inimigos ambientais, geometria/autoblindagem, metadados, cadeia de custódia e infraestrutura nacional.
+      </p>
+
+      <div class="aph-quick-box">
+        <strong>Advertência Técnica (Caráter Complementar):</strong> A dosimetria retrospectiva de objetos pessoais é complementar e <strong>não deve ser usada isoladamente</strong> para estabelecer dose absorvida pelo paciente, definir prognóstico ou determinar conduta terapêutica.
+      </div>
+
+      <!-- Conversores Bidirecionais REMM / SI e Estimador por Time to Emesis no Topo do Módulo 3 -->
+      <div class="sim-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
+          <h3 style="margin-bottom:0;">Conversores Dosimétricos Bidirecionais (Padrão REMM / SI)</h3>
+          <button type="button" class="action-btn secondary" onclick="clearDosimetryConverters()">Limpar Conversores</button>
+        </div>
+        <div class="grid-3">
+          <!-- rad <-> Gy -->
+          <div class="card" style="margin-bottom:0;">
+            <h4 style="color:#67c2ff; margin-bottom:8px;">Dose Absorvida: rad ⇄ Gy</h4>
+            <div class="form-group">
+              <label for="convRad">rad (1 Gy = 100 rad)</label>
+              <input type="number" id="convRad" step="any" placeholder="Ex.: 200" oninput="convertRadGy('rad')" />
+            </div>
+            <div class="form-group">
+              <label for="convGy">Gray (Gy = J/kg)</label>
+              <input type="number" id="convGy" step="any" placeholder="Ex.: 2.0" oninput="convertRadGy('gy')" />
+            </div>
+            <div id="sarBandBox" class="sim-status status-blocked" style="font-size:0.84rem;">
+              Informe um valor em rad ou Gy para ver a interpretação orientativa de SAR.
+            </div>
+          </div>
+
+          <!-- rem <-> Sv -->
+          <div class="card" style="margin-bottom:0;">
+            <h4 style="color:#67c2ff; margin-bottom:8px;">Proteção Radiológica: rem ⇄ Sv</h4>
+            <div class="form-group">
+              <label for="convRem">rem (1 Sv = 100 rem)</label>
+              <input type="number" id="convRem" step="any" placeholder="Ex.: 50" oninput="convertRemSv('rem')" />
+            </div>
+            <div class="form-group">
+              <label for="convSv">Sievert (Sv)</label>
+              <input type="number" id="convSv" step="any" placeholder="Ex.: 0.5" oninput="convertRemSv('sv')" />
+            </div>
+            <p style="font-size:0.82rem; color:var(--text-muted);">
+              Nota: Sv aplica-se a grandezas de proteção radiológica (dose equivalente/efetiva) e não substitui diretamente o Gray (Gy) na avaliação determinística aguda.
+            </p>
+          </div>
+
+          <!-- Ci <-> Bq -->
+          <div class="card" style="margin-bottom:0;">
+            <h4 style="color:#67c2ff; margin-bottom:8px;">Atividade: Ci ⇄ Bq</h4>
+            <div class="form-group">
+              <label for="convCi">Curie (Ci) — 1 Ci = 3,7 × 10¹⁰ Bq</label>
+              <input type="number" id="convCi" step="any" placeholder="Ex.: 1" oninput="convertCiBq('ci')" />
+            </div>
+            <div class="form-group">
+              <label for="convBq">Becquerel (Bq = 1/s)</label>
+              <input type="number" id="convBq" step="any" placeholder="Ex.: 37000000000" oninput="convertCiBq('bq')" />
+            </div>
+            <div id="ciBqReadout" style="font-size:0.84rem; color:#93c5fd; font-weight:700;">
+              Equivalência em notação científica exibida em tempo real.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sim-box">
+        <h3>Estimador Clínico Auxiliar por <em>Time to Emesis</em> (Tempo até o Início dos Vômitos)</h3>
+        <p style="color:var(--text-muted); font-size:0.89rem; margin-bottom:10px;">
+          Ferramenta clínica auxiliar de triagem e acompanhamento — não substitui avaliação médica, hemogramas seriados (a cada 6–8h) nem biodosimetria citogenética.
+        </p>
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="emesisHours">Tempo decorrido entre a exposição e o início dos vômitos (horas)</label>
+            <input type="number" id="emesisHours" min="0" max="168" step="0.1" placeholder="Ex.: 1.5" oninput="estimateFromEmesis()" />
+          </div>
+          <div class="form-group">
+            <label for="emesisQuickSelect">Ou selecione uma faixa observada</label>
+            <select id="emesisQuickSelect" onchange="applyEmesisPreset()">
+              <option value="">-- Selecionar faixa --</option>
+              <option value="0.5">Menos de 1 hora (ex.: 0,5 h)</option>
+              <option value="1.5">Entre 1 e 2 horas (ex.: 1,5 h)</option>
+              <option value="3.0">Entre 2 e 4 horas (ex.: 3,0 h)</option>
+              <option value="6.0">Acima de 4–6 horas (ex.: 6,0 h)</option>
+            </select>
+          </div>
+        </div>
+        <div id="emesisResultBox" class="sim-status status-attenuated">
+          Insira o tempo em horas (ou selecione uma faixa) para estimativa clínica auxiliar.
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Física de Estado Sólido, Leitura Luminescente (OSL / TL), EPR e Modelagem</h3>
+        <p>
+          A dosimetria retrospectiva fortuita reconstrói estimativas de dose usando materiais presentes na vítima ou no entorno (cerâmicas de eletrônicos, vidros, sais como NaCl e sacarose, ou tecidos calcificados como esmalte dentário/unhas), sempre em caráter complementar e condicionado à caracterização e calibração laboratorial.
+        </p>
+        <ul class="clean-list">
+          <li><strong>Banda de Valência/Condução e Poços de Potencial (<em>Traps</em>):</strong> A radiação ionizante promove elétrons para estados excitados, ficando parte retida em defeitos ou impurezas da rede cristalina (armadilhas/poços de potencial) associados ao sinal latente.</li>
+          <li><strong>OSL (Luminescência Oticamente Estimulada):</strong> Libera cargas aprisionadas por estímulo luminoso controlado (ex.: luz azul/verde), aplicável a componentes cerâmicos selecionados de eletrônicos, vidros e Al₂O₃.</li>
+          <li><strong>TL (Termoluminescência):</strong> Libera cargas por aquecimento controlado em ambiente escuro, aplicável a sais (NaCl, sacarose), cerâmicas e dosímetros TL calibrados.</li>
+          <li><strong>EPR (Ressonância Paramagnética Eletrônica):</strong> Detecta espécies paramagnéticas/radicais livres induzidos por radiação em matrizes como esmalte dentário e unhas.</li>
+          <li><strong>Modelagem Computacional (Monte Carlo):</strong> Reconstrói distribuição de dose e apoia a interpretação física a partir da geometria do cenário, fonte, blindagens e metadados.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Inimigos Ambientais, Geometria, Autoblindagem e Metadados</h3>
+        <ul class="clean-list">
+          <li><strong><em>Bleaching</em> Ótico:</strong> Perda ou redução prematura de sinal luminescente por luz visível ou UV antes da leitura laboratorial.</li>
+          <li><strong><em>Fading</em> Térmico:</strong> Decaimento do sinal em armadilhas por calor interno de eletrônicos em funcionamento ou temperatura ambiente/tempo.</li>
+          <li><strong>Umidade e Degradação Química:</strong> Água dissolve sais solúveis (NaCl/sacarose); solventes ou agentes químicos agressivos podem alterar amostras ou sinais de EPR.</li>
+          <li><strong>Geometria e Autoblindagem:</strong> A orientação corporal, a posição anatômica do item e as barreiras/tecidos determinam a atenuação; objetos não substituem avaliação clínica nem devem ser usados isoladamente para prognóstico ou conduta.</li>
+          <li><strong>4 Grupos de Metadados Essenciais:</strong> (1) Identificação e vínculo; (2) Cronologia e duração (evento, sequência, duração, recolhimento); (3) Geometria, posição e barreiras; (4) Histórico ambiental e de manuseio (luz, calor, umidade, químicos, transporte e lacunas/incertezas).</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Algoritmo de Ação em Campo, Sequência DRADE e Cadeia de Custódia</h3>
+        <ul class="clean-list">
+          <li><strong>Passo 1 — Estabilização Clínica Primária (ABCDE / MARCHE²) e Proteção da Equipe:</strong> Suporte vital e EPI adequado sem atrasar manobras críticas.</li>
+          <li><strong>Passo 2 — Triagem Radiológica por Cenário:</strong> Cenário A (Irradiação Externa), Cenário B (Contaminação Externa: remover roupas, isolar, lavar com água morna e sabão neutro; se particulado e não puder retirar de imediato, umedecer de forma controlada para reduzir ressuspensão), Cenário C (Suspeita de Contaminação Interna: conter dispersão, descontaminar externamente, avaliar swabs/bioanálise e decorporação conforme indicação médica).</li>
+          <li><strong>Passos 3 e 4 — Preservação Condicionada e Cadeia de Custódia:</strong> Apenas após estabilidade clínica, segurança radiológica e atribuições formais, acondicionar em invólucro opaco, seco e compatível com a amostra, longe de calor/umidade.</li>
+          <li><strong>3 Elementos da Cadeia de Custódia:</strong> (1) Rastreabilidade; (2) Integridade e identificação; (3) Registro de transferência (data/hora, responsáveis e assinatura).</li>
+          <li><strong>Sequência DRADE (apoio didático):</strong> <strong>D</strong>escontaminação Precoce • <strong>R</strong>econhecimento • <strong>A</strong>ntídotos / Medidas Específicas • <strong>D</strong>escontaminação Completa • <strong>E</strong>vacuação.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Infraestrutura Nacional de Referência e Biodosimetria Citogenética</h3>
+        <p>
+          <strong>CNEN</strong> e <strong>IRD</strong> integram a estrutura nacional de referência em proteção radiológica, metrologia e biodosimetria citogenética por <strong>cromossomos dicêntricos</strong> (quebras de fita dupla de DNA e reparo imperfeito em linfócitos; cultivo tipicamente em torno de 48h ou mais, com cautela em exposições parciais/heterogêneas). Também integram o ecossistema técnico-científico/militar <strong>USP</strong> (EPR), <strong>IPEN</strong>, <strong>UFS</strong> (OSL/TL), <strong>IDQBRN</strong>, <strong>CTMSP</strong>, <strong>BtIDefNBQR</strong> e <strong>C-MOPM</strong>, devendo-se distinguir <strong>competência</strong>, <strong>capacidade laboratorial</strong>, <strong>disponibilidade emergencial</strong> e <strong>acordo formal</strong>.
+        </p>
+      </div>
+    </section>
+
+    <!-- MÓDULO 4 -->
+    <section id="tab-m4" class="panel tab-section" style="display:none;">
+      <h2 class="module-title">M4 • Antídotos, Decorporantes e SAR / SCR</h2>
+      <p class="module-lead">
+        Seletor interativo de produtos radiológicos de interesse, protocolos orientativos de AGENTE/ANTÍDOTOS e decorporantes, fases evolutivas e subsíndromes da SAR e manifestações da SCR.
+      </p>
+
+      <div class="aph-quick-box">
+        <strong>Consulta Rápida APH / Clínica:</strong> Registre a hora exata do início dos vômitos (<em>Time to Emesis</em>), solicite hemogramas com linfócitos a cada 6–8h, não use limiares ou esquemas terapêuticos isolados sem validação médica e lembre-se de que a biodosimetria citogenética demanda cultivo celular (~48h ou mais).
+      </div>
+
+      <!-- Seletor Interativo Clicável no Topo do Módulo 4 -->
+      <div class="sim-box">
+        <h3>Seletor Interativo de Produtos Radiológicos e Radionuclídeos de Interesse</h3>
+        <p style="color:var(--text-muted); font-size:0.89rem; margin-bottom:10px;">
+          Clique em qualquer produto ou radionuclídeo para consultar emissão, meia-vida, órgão-alvo, antídoto/decorporante e posologia clássica de referência (regra geral).
+        </p>
+
+        <div id="nuclideButtonsBar" class="filter-bar" role="group" aria-label="Produtos Radiológicos"></div>
+
+        <div id="nuclideDetailCard" class="nuclide-detail"></div>
+
+        <div class="sim-status status-attenuated" style="margin-top:12px; font-size:0.85rem;">
+          <strong>Nota de Avaliação Médica Criteriosa:</strong> As posologias e agentes decorporantes indicados representam referência clássica/regra geral e dependem de avaliação médica especializada, via de incorporação, dose/atividade estimada, função renal/tireoidiana e protocolos oficiais vigentes.
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Matriz de Referência: AGENTE/ANTÍDOTOS e Decorporantes</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Agente / Radionuclídeo / Cenário</th>
+                <th>AGENTE/ANTÍDOTOS / Medida Específica</th>
+                <th>Observações Clínicas e Operacionais</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Iodo Radioativo (ex.: Iodo-131)</strong></td>
+                <td><strong>Iodeto de Potássio (KI)</strong></td>
+                <td>Bloqueio tireoidiano quando indicado por autoridade/médico; janela temporal precoce é crítica.</td>
+              </tr>
+              <tr>
+                <td><strong>Césio (ex.: Césio-137)</strong></td>
+                <td><strong>Azul da Prússia (Ferrocianeto férrico insolúvel)</strong></td>
+                <td>Interrompe a circulação entero-hepática ligando-se ao césio no trato gastrointestinal.</td>
+              </tr>
+              <tr>
+                <td><strong>Transurânicos / Actinídeos (ex.: Plutônio, Amerício, Cúrio)</strong></td>
+                <td><strong>Ca-DTPA / Zn-DTPA</strong></td>
+                <td>Quelação para aumentar a excreção renal; avaliar indicação médica especializada conforme via e dose.</td>
+              </tr>
+              <tr>
+                <td><strong>Urânio / Acidose / Alcalinização (conforme protocolo)</strong></td>
+                <td><strong>Bicarbonato / Hidratação e Suporte Nefrológico</strong></td>
+                <td>Aplicar estritamente conforme protocolo clínico e avaliação nefrológica/toxicológica.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Fases Evolutivas de SAR e SCR</h3>
+        <ul class="clean-list">
+          <li><strong>Fases Evolutivas da SAR:</strong> (1) <em>Prodrômica</em> (náuseas, vômitos, anorexia, astenia, cefaleia ou diarreia — registrar horário exato do início); (2) <em>Latente</em> (melhora transitória aparente); (3) <em>Manifesta / Estado</em> (citopenias/imunossupressão, quadro gastrointestinal ou neurovascular); (4) <em>Recuperação ou Óbito</em>.</li>
+          <li><strong>Evolução e Cuidados da SCR:</strong> Pode apresentar eritema precoce transitório, fase latente, fase clínica/de estado e evolução tardia, com eritema, dor, edema, epilação, epitelite seca ou exsudativa, flictenas, ulceração e necrose. Diferenciar de queimaduras térmicas/químicas, evitar tratar faixas numéricas de dose como fronteiras rígidas isoladas e realizar exame seriado e manejo cirúrgico/analgésico especializado quando indicado.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Subsíndromes Principais por Faixa Orientativa de Dose Aguda de Corpo Inteiro — SAR</h3>
+        <p>
+          A <strong>SAR</strong> (Síndrome Aguda da Radiação) decorre de exposição aguda, relativamente homogênea e de corpo inteiro ou ampla extensão acima de limiares de dose (em torno de 1 Gy para manifestação sistêmica). A <strong>SCR</strong> (Síndrome Cutânea da Radiação) refere-se a alterações patológicas na pele e tecidos subjacentes por doses elevadas.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Subsíndrome da SAR</th>
+                <th>Faixa Orientativa de Dose Aguda (Corpo Inteiro)</th>
+                <th>Manifestações Clínicas e Evolução</th>
+                <th>Conduta e Monitoramento</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Hematopoiética (ou Hematológica)</strong></td>
+                <td>A partir de ~0,7–1 Gy até ~6–8+ Gy (mais marcante &gt; 2 Gy; limiar clássico em torno de 1 Gy)</td>
+                <td>Fases prodrômica, latente e manifesta; citopenias (linfopenia precoce, neutropenia, plaquetopenia), infecções e sangramentos.</td>
+                <td>Registrar hora do início dos vômitos (<em>Time to Emesis</em>), hemogramas com linfócitos a cada 6–8h, biodosimetria citogenética, isolamento/controle de infecções e suporte hematológico.</td>
+              </tr>
+              <tr>
+                <td><strong>Gastrointestinal</strong></td>
+                <td>Em torno de 8–10 Gy (frequentemente associada a doses elevadas de corpo inteiro)</td>
+                <td>Náuseas, vômitos precoces e intensos, diarreia severa, distúrbios hidroeletrolíticos, lesão de mucosa intestinal e translocação bacteriana.</td>
+                <td>Reposição hidroeletrolítica e nutricional rigorosa, controle de infecções, analgesia, monitoração intensiva e avaliação especializada.</td>
+              </tr>
+              <tr>
+                <td><strong>Neurovascular (ou Cerebrovascular)</strong></td>
+                <td>Acima de ~20 Gy (doses muito elevadas)</td>
+                <td>Instalação rápida de sintomas neurológicos agudos (prostração, ataxia, convulsões, edema/alteração de consciência) e colapso hemodinâmico.</td>
+                <td>Cuidados paliativos/intensivos de conforto, controle rigoroso de sintomas, segurança da equipe e apoio clínico contínuo.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- MÓDULO 5 -->
+    <section id="tab-m5" class="panel tab-section" style="display:none;">
+      <h2 class="module-title">M5 • TCCC QBRN, MARCHE² e Cenário Tático</h2>
+      <p class="module-lead">
+        Simulador Tático Interativo TCCC CBNR (MAR ⇄ CHE), significado de cada letra do mnemônico <strong>MARCHE²</strong>, tabela comparativa letra por letra (TCCC Convencional vs. TCCC QBRN), protocolo CRESS e roteiro didático de adestramento.
+      </p>
+
+      <div class="aph-quick-box">
+        <strong>Consulta Rápida Cirúrgica / Trauma Combinado:</strong> Cirurgias primárias indispensáveis nas primeiras <strong>36–48 horas</strong>; evitar cirurgias eletivas/reparadoras na janela de mielossupressão (<strong>dias 3 a 50</strong>).
+      </div>
+
+      <!-- Simulador Tático Interativo TCCC CBNR (MAR <-> CHE) no Topo do Módulo 5 -->
+      <div class="sim-box">
+        <h3>Simulador Tático Interativo TCCC CBNR (MAR ⇄ CHE)</h3>
+        <div class="grid-3">
+          <div class="form-group">
+            <label for="tcccZone">Zona Operacional</label>
+            <select id="tcccZone" onchange="updateTcccSim()">
+              <option value="hot">Zona Quente (Sob ameaça ativa — Postura MAR)</option>
+              <option value="warm">Zona Morna (Descontaminação / Extração — Postura CHE)</option>
+              <option value="cold">Zona Fria / Retaguarda Clínica (Postura CHE)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="tcccCondition">Condição da Vítima</label>
+            <select id="tcccCondition" onchange="updateTcccSim()">
+              <option value="hemorrhage">Hemorragia exsanguinante / trauma agudo</option>
+              <option value="contaminated">Contaminação externa (pó/líquido/aerossol)</option>
+              <option value="combined">Lesão combinada (trauma + irradiação/contaminação)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="tcccTimeWindow">Janela Temporal Pós-Evento</label>
+            <select id="tcccTimeWindow" onchange="updateTcccSim()">
+              <option value="0_1h">0 a 1 hora (fase imediata / swabs precoces)</option>
+              <option value="1_48h">1 a 48 horas (janela de cirurgia primária em 36–48h)</option>
+              <option value="3_50d">Dias 3 a 50 (janela crítica de mielossupressão)</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="tcccAlertBox" class="sim-status status-penetrating"></div>
+
+        <div class="checklist-box">
+          <strong style="color:#7dd3fc; display:block; margin-bottom:6px;">Checklist Operacional Interativo da Situação Selecionada:</strong>
+          <div id="tcccChecklistItems"></div>
+        </div>
+      </div>
+
+      <!-- Significado de cada letra do mnemônico MARCHE² -->
+      <div class="card">
+        <h3>Significado de Cada Letra do Mnemônico MARCHE²</h3>
+        <ul class="clean-list">
+          <li><strong>M — Hemorragia Maciça (<em>Massive Hemorrhage</em>):</strong> Controle imediato de sangramentos exsanguinantes com torniquete tático, curativo hemostático ou compressão direta.</li>
+          <li><strong>A — Via Aérea (<em>Airway</em>):</strong> Abertura, desobstrução e manutenção da permeabilidade da via aérea com segurança da coluna cervical quando indicado.</li>
+          <li><strong>R — Respiração (<em>Respiration</em>):</strong> Identificação e manejo de lesões torácicas ameaçadoras à vida (pneumotórax hipertensivo, tórax aberto, hipóxia).</li>
+          <li><strong>C — Circulação (<em>Circulation</em>):</strong> Controle de hemorragias residuais, reposição volêmica/hemoderivados conforme protocolo e avaliação de choque.</li>
+          <li><strong>H — Hipotermia / Cabeça (<em>Hypothermia / Head Injury</em>):</strong> Prevenção ativa de hipotermia (crítica após lavagem com água) e avaliação neurológica / TCE.</li>
+          <li><strong>E¹ — Ferimentos e Exposição / Evacuação / Descontaminação (<em>Wounds / Exposure / Evacuation / Decontamination</em>):</strong> Inspeção completa, remoção de vestes contaminadas, lavagem com água morna e sabão neutro sem abrasão e preparo para evacuação.</li>
+          <li><strong>E² — Escalonamento, Dosimetria/Avaliação Especializada e Cuidados Continuados (<em>Escalation / Dosimetry &amp; Specialist Care</em>):</strong> Registro de <em>Time to Emesis</em>, coleta seriada de linfócitos, antídotos/decorporação, preservação condicionada de pertences e reavaliação contínua.</li>
+        </ul>
+      </div>
+
+      <!-- Tabela Comparativa Letra por Letra (Desktop) + Cartões Empilhados (Mobile) -->
+      <div class="card">
+        <h3>Tabela Comparativa Letra por Letra: TCCC Convencional vs. TCCC QBRN (MARCHE²)</h3>
+        <div class="table-wrap mouche-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Letra</th>
+                <th>TCCC Convencional</th>
+                <th>TCCC QBRN (Químico, Biológico, Radiológico e Nuclear)</th>
+              </tr>
+            </thead>
+            <tbody id="moucheTableBody"></tbody>
+          </table>
+        </div>
+        <div id="moucheMobileCards" class="mobile-mouche-cards"></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Quando Usar MAR</h3>
+          <p>
+            Empregado na <strong>Zona Quente / sob ameaça ativa</strong>, quando há exposição direta ao perigo NBQR/tático e a prioridade absoluta é a proteção respiratória/EPI imediata da equipe, avaliação rápida da ameaça, estancamento de hemorragias graves e extração tática rápida da vítima para a Zona Morna.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Quando Usar CHE</h3>
+          <p>
+            Empregado na <strong>Zona Morna, Zona Fria e fase de evacuação/atendimento</strong>, após a extração da zona de perigo imediato, concentrando-se na descontaminação controlada, prevenção de hipotermia e abrasão, manejo clínico/hematológico seriado, antídotos, preservação condicionada de pertences e evacuação segura.
+          </p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Protocolo CRESS</h3>
+        <ul class="clean-list">
+          <li><strong>C — Contenção e Segurança:</strong> Avaliação da cena, perímetros (Quente, Morna, Fria), posicionamento contra o vento/em local elevado e contenção da dispersão.</li>
+          <li><strong>R — Reconhecimento e Proteção:</strong> Identificação da natureza da ameaça, paramentação de EPI/MOPP adequado e prioridade absoluta ao suporte à vida.</li>
+          <li><strong>E — Evacuação e Descontaminação:</strong> Extração tática, remoção de vestimentas, lavagem cutânea controlada (água morna e sabão neutro) e prevenção de hipotermia.</li>
+          <li><strong>S — Suporte Clínico e Triagem:</strong> Estabilização ABCDE/MARCHE², registro de <em>Time to Emesis</em>, hemogramas seriados e triagem de lesões combinadas.</li>
+          <li><strong>S — Sustentação, Custódia e Encerramento:</strong> Terapia específica/decorporação quando indicada, cadeia de custódia de amostras/pertences, recomposição de materiais e reavaliação da equipe.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Roteiro Didático de Adestramento (10 Dias / Duas Semanas)</h3>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:8px;">
+          Sugestão de progressão instrucional sempre com revisão de especialista e sem uso de fontes radioativas reais ou práticas não autorizadas:
+        </p>
+        <ul class="clean-list">
+          <li><strong>Dias 1–2:</strong> Introdução à radiação ionizante, cenários NBQR (emergência radiológica vs. nuclear), tipos de radiação (alfa, beta, gama, raios X, nêutrons), meia-vida física e grandezas/unidades (Bq, Gy, Sv, rad).</li>
+          <li><strong>Dias 3–4:</strong> Distinção entre irradiação externa, contaminação externa e contaminação interna; princípios de tempo, distância e blindagem; proteção da equipe, monitoração e noções de efeitos biológicos.</li>
+          <li><strong>Dias 5–6:</strong> Suporte vital e atendimento inicial ao radioacidentado; descontaminação segura; múltiplas vítimas, triagem clínica sob estresse e uso didático da sequência DRADE.</li>
+          <li><strong>Dias 7–8:</strong> SAR e SCR (fases evolutivas, avaliação clínica e hematológica seriada, limites de interpretação); fundamentos da dosimetria retrospectiva e métodos OSL, TL e EPR.</li>
+          <li><strong>Dias 9–10:</strong> Biodosimetria citogenética, degradação de evidências (<em>bleaching</em>, <em>fading</em>, umidade, agentes químicos), geometria/autoblindagem, metadados, proposta de POP, cadeia de custódia, governança institucional e exercício integrado simulado.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- MÓDULO 6 -->
+    <section id="tab-m6" class="panel tab-section" style="display:none;">
+      <h2 class="module-title">M6 • EPI, Níveis MOPP e Proteção Operacional</h2>
+      <p class="module-lead">
+        Avaliador operacional de níveis de proteção <strong>MOPP</strong> (<em>Mission-Oriented Protective Posture</em>) e equivalentes de EPI (Níveis A a D), com foco em paramentação/desparamentação, estresse térmico e diferença entre barreira a contaminantes e radiação penetrante externa.
+      </p>
+
+      <div class="aph-quick-box">
+        <strong>Consulta Rápida EPI / Proteção:</strong> EPI de barreira (luvas, vestimentas, respiradores) protege contra contaminação particulada/líquida e incorporação interna; contra radiação penetrante externa (gama, raios X, nêutrons), valem distância, tempo reduzido, blindagem adequada e avaliação radiológica.
+      </div>
+
+      <div class="card">
+        <h3>Avaliador Operacional de Nível de Proteção (MOPP / EPI)</h3>
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="moppLevel">Nível MOPP / Cenário Operacional</label>
+            <select id="moppLevel" onchange="evaluateMopp()">
+              <option value="0">MOPP 0 — Prontidão / Sem ameaça ativa imediata</option>
+              <option value="1">MOPP 1 — Risco potencial / Alerta NBQR</option>
+              <option value="2">MOPP 2 — Ameaça provável / Preparação de máscara e calçados</option>
+              <option value="3">MOPP 3 — Zona Morna / Descontaminação e manejo de contaminados</option>
+              <option value="4">MOPP 4 — Máxima proteção / Zona Quente ou alta concentração</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="moppHeat">Condição Térmica / Esforço Físico</label>
+            <select id="moppHeat" onchange="evaluateMopp()">
+              <option value="mild">Clima ameno / Esforço leve a moderado</option>
+              <option value="hot">Clima quente / Esforço intenso prolongado</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="moppOutput" class="sim-box" style="margin-bottom:0;"></div>
+      </div>
+    </section>
+
+    <!-- MÓDULO 7 -->
+    <section id="tab-m7" class="panel tab-section" style="display:none;">
+      <h2 class="module-title">M7 • Registros Operacionais e Fichas POP</h2>
+      <p class="module-lead">
+        Preenchimento rápido de apoio para registro operacional inspirado nos Anexos B a H da apostila (metadados de objeto, triagem DRADE, cadeia de custódia, evolução SAR/SCR, encerramento/validação, incidente/entrevista e encaminhamento/debriefing), sempre após a prioridade ao suporte vital.
+      </p>
+
+      <div class="card">
+        <h3>Gerador de Registro Operacional (Anexos B a H)</h3>
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="popAnnex">Tipo de Ficha / Anexo</label>
+            <select id="popAnnex">
+              <option value="Anexo B — Metadados e Preservação de Objeto / Amostra">Anexo B — Metadados e Preservação de Objeto / Amostra</option>
+              <option value="Anexo C — Triagem Clínica e Radiológica de Campo (DRADE)">Anexo C — Triagem Clínica e Radiológica de Campo (DRADE)</option>
+              <option value="Anexo D — Registro de Cadeia de Custódia e Transferência">Anexo D — Registro de Cadeia de Custódia e Transferência</option>
+              <option value="Anexo E — Evolução Clínica, Hematológica e Lesão Cutânea (SAR/SCR)">Anexo E — Evolução Clínica, Hematológica e Lesão Cutânea (SAR/SCR)</option>
+              <option value="Anexo F — Checklist de Validação, Segurança de Cena e Encerramento">Anexo F — Checklist de Validação, Segurança de Cena e Encerramento</option>
+              <option value="Anexo G — Identificação do Incidente, Entrevista e Monitoração">Anexo G — Identificação do Incidente, Entrevista e Monitoração</option>
+              <option value="Anexo H — Encaminhamento Laboratorial, Transferência e Debriefing">Anexo H — Encaminhamento Laboratorial, Transferência e Debriefing</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="popVictim">Identificação da Vítima / Item / Ocorrência</label>
+            <input type="text" id="popVictim" placeholder="Ex.: Vítima 01 / Item-001 / Exercício NBQR" />
+          </div>
+          <div class="form-group">
+            <label for="popScenario">Cenário / Classificação</label>
+            <select id="popScenario">
+              <option value="Irradiação externa">Irradiação externa</option>
+              <option value="Contaminação externa (pele/roupas)">Contaminação externa (pele/roupas)</option>
+              <option value="Suspeita de contaminação interna">Suspeita de contaminação interna</option>
+              <option value="Atenção a nêutrons / ativação">Atenção a nêutrons / ativação</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="popEmesis">Hora do Início de Náuseas/Vômitos (se presente)</label>
+            <input type="text" id="popEmesis" placeholder="Ex.: 09:25 h (ou Sem vômitos até o momento)" />
+          </div>
+          <div class="form-group">
+            <label for="popLocation">Localização Anatômica / Orientação / Barreiras</label>
+            <input type="text" id="popLocation" placeholder="Ex.: Bolso frontal esquerdo / Frente para fonte / Sem blindagem" />
+          </div>
+          <div class="form-group">
+            <label for="popCustody">Invólucro / Responsável / Transferência</label>
+            <input type="text" id="popCustody" placeholder="Ex.: Invólucro opaco e seco / Coletado por... / Destino..." />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="popNotes">Condições Ambientais (Luz/Calor/Umidade/Químicos), Clínicas e Observações</label>
+          <textarea id="popNotes" rows="3" placeholder="Ex.: ABCDE estável; sem exposição solar direta; hemograma colhido; sem uso isolado para prognóstico..."></textarea>
+        </div>
+
+        <div style="display:flex; flex-wrap:wrap; gap:10px;">
+          <button type="button" class="action-btn" onclick="generatePopSheet()">Gerar Resumo da Ficha</button>
+          <button type="button" class="action-btn secondary" onclick="copyPopSheet()">Copiar Texto</button>
+          <button type="button" class="action-btn secondary" onclick="clearPopSheet()">Limpar Ficha</button>
+        </div>
+
+        <div id="popPreview" class="sim-box" style="margin-top:14px; margin-bottom:0; white-space:pre-line; font-size:0.9rem;"></div>
+      </div>
+    </section>
+
+    <!-- MÓDULO 8 -->
+    <section id="tab-m8" class="panel tab-section" style="display:none;">
+      <h2 class="module-title">M8 • Glossário Técnico NBQR e Radioproteção</h2>
+      <p class="module-lead">
+        Exibindo <strong id="glossaryFilteredCount">0</strong> de <strong id="glossaryTotalCount">0</strong> verbetes, siglas, mnemônicos e abreviações essenciais da resposta NBQR e dosimetria radiológica.
+      </p>
+
+      <div class="form-group">
+        <label for="glossarySearch">Buscar termo, sigla ou definição</label>
+        <input type="text" id="glossarySearch" oninput="renderGlossary()" placeholder="Digite para filtrar (ex.: SAR, OSL, MOPP, DRADE, Gray, DTPA, Dicêntrico)..." />
+      </div>
+
+      <div id="alphabetBar" class="alpha-bar" aria-label="Filtro Alfabético"></div>
+      <div id="glossaryList"></div>
+    </section>
+
+    <!-- SHOW DA RADIAÇÃO -->
+    <section id="tab-game" class="panel tab-section" style="display:none;">
+      <h2 class="module-title">☢️ Show da Radiação (Quiz Interativo)</h2>
+      <p class="module-lead">
+        30 questões técnicas com alternativas embaralhadas a cada partida. Cada pergunta tem <strong>20 segundos</strong> com detector Geiger (CPS) acelerando e sirene industrial contínua nos últimos 5 segundos até a resposta ou estouro do tempo (explosão no <code>0s</code>).
+      </p>
+
+      <div class="game-hud">
+        <div class="hud-box">
+          <div class="hud-label">Questão</div>
+          <div class="hud-val" id="hudQuestion">0 / 30</div>
+        </div>
+        <div class="hud-box">
+          <div class="hud-label">Pontuação</div>
+          <div class="hud-val" id="hudScore">0</div>
+        </div>
+        <div class="hud-box">
+          <div class="hud-label">Tempo Restante</div>
+          <div class="hud-val" id="hudTimer">20s</div>
+        </div>
+        <div class="hud-box">
+          <div class="hud-label">Áudio Geiger / Sirene</div>
+          <div class="hud-val" id="hudSoundState" style="font-size:0.95rem;">Ativo</div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+        <button type="button" class="action-btn gold" id="btnStartGame" onclick="startRadiationShow()">Iniciar / Reiniciar Show da Radiação</button>
+        <button type="button" class="action-btn secondary" id="btnToggleSound" onclick="toggleAudioEngine()">Silenciar / Ativar Som</button>
+      </div>
+
+      <div id="gameArena" class="card">
+        <h3>Pronto para começar?</h3>
+        <p>
+          Clique em <strong>Iniciar / Reiniciar Show da Radiação</strong> para sortear a ordem das 30 perguntas e embaralhar as opções de resposta. Ao responder, o cronômetro e o áudio param e você vê a justificativa técnica. Se o tempo zerar, ocorre o som de explosão e a questão é encerrada.
+        </p>
+      </div>
+    </section>
+
+    <!-- TRAJETÓRIA DO AUTOR -->
+    <section id="tab-autor" class="panel tab-section" style="display:none;">
+      <h2 class="module-title">Trajetória do Autor</h2>
+      <p class="module-lead">
+        Espaço reservado para a trajetória operacional e acadêmica do <strong>1° SG-FN-ENF Almeida</strong>, permitindo preenchimento futuro e adição de fotos e vídeos.
+      </p>
+
+      <div class="card">
+        <h3>Registro Editável da Trajetória</h3>
+        <div class="form-group">
+          <label for="authorBioInput">Texto da Trajetória (Editável para Preenchimento Futuro)</label>
+          <textarea id="authorBioInput" rows="6" placeholder="Campo reservado para preenchimento futuro da trajetória do 1° SG-FN-ENF Almeida..."></textarea>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+          <button type="button" class="action-btn" onclick="saveAuthorBio()">Salvar Texto Localmente</button>
+          <button type="button" class="action-btn secondary" onclick="insertApostilaAuthorDraft()">Inserir Base da Apostila</button>
+          <button type="button" class="action-btn secondary" onclick="clearAuthorBio()">Limpar Campo</button>
+        </div>
+
+        <div class="form-group">
+          <label for="authorMediaInput">Adicionar Fotos ou Vídeos da Trajetória</label>
+          <input type="file" id="authorMediaInput" accept="image/*,video/*" multiple onchange="handleAuthorMedia(event)" />
+        </div>
+
+        <div id="authorMediaGallery" class="media-grid"></div>
+      </div>
+    </section>
+
+    <!-- FALE CONOSCO -->
+    <section id="tab-contato" class="panel tab-section" style="display:none;">
+      <h2 class="module-title">Fale Conosco e Canais Diretos</h2>
+      <p class="module-lead">
+        Canais diretos de contato para informações técnicas, instruções, treinamentos e parcerias.
+      </p>
+
+      <div class="grid-2">
+        <div class="contact-card">
+          <h3>Telefone / WhatsApp</h3>
+          <p style="font-size:1.05rem; font-weight:700; color:#67c2ff;">+55 21 99821-9406</p>
+          <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:4px;">
+            <a class="action-btn" style="text-decoration:none;" href="https://wa.me/5521998219406" target="_blank" rel="noopener">Abrir WhatsApp</a>
+            <button type="button" class="action-btn secondary" onclick="copyText('+55 21 99821-9406')">Copiar Número</button>
+          </div>
+        </div>
+
+        <div class="contact-card">
+          <h3>E-mail Institucional / Contato</h3>
+          <p style="font-size:1.05rem; font-weight:700; color:#67c2ff;">almeidaenfop@gmail.com</p>
+          <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:4px;">
+            <a class="action-btn" style="text-decoration:none;" href="mailto:almeidaenfop@gmail.com">Enviar E-mail</a>
+            <button type="button" class="action-btn secondary" onclick="copyText('almeidaenfop@gmail.com')">Copiar E-mail</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-card" style="margin-top:14px;">
+        <h3>Instagram</h3>
+        <p style="word-break:break-all; color:#dce7f5;">
+          https://www.instagram.com/almeida_instrutoraph?gwpx=MWwxcXlrdHhxenIxdw==
+        </p>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:4px;">
+          <a class="action-btn" style="text-decoration:none;" href="https://www.instagram.com/almeida_instrutoraph?gwpx=MWwxcXlrdHhxenIxdw==" target="_blank" rel="noopener">Abrir Instagram</a>
+          <button type="button" class="action-btn secondary" onclick="copyText('https://www.instagram.com/almeida_instrutoraph?gwpx=MWwxcXlrdHhxenIxdw==')">Copiar Link</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    let currentTab = 'm1';
+
+    // Navegação entre abas
+    function switchModuleTab(target, silent) {
+      if (!target) return;
+      currentTab = target;
+      const allBtns = document.querySelectorAll('.nav-btn');
+      const allSecs = document.querySelectorAll('.tab-section');
+      let matchedBtn = null;
+
+      allBtns.forEach(b => {
+        const isMatch = b.getAttribute('data-tab') === target;
+        b.classList.toggle('active', isMatch);
+        if (isMatch) matchedBtn = b;
+      });
+
+      allSecs.forEach(sec => {
+        sec.style.display = (sec.id === 'tab-' + target) ? 'block' : 'none';
+      });
+
+      if (target !== 'game' && typeof stopGameTimers === 'function') {
+        stopGameTimers();
+      }
+
+      try {
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      } catch (e) {}
+
+      if (matchedBtn && !silent) {
+        showToast(matchedBtn.textContent.trim());
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2200);
+    }
+
+    function copyText(txt) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt)
+          .then(() => showToast('Copiado: ' + txt))
+          .catch(() => fallbackCopy(txt));
+      } else {
+        fallbackCopy(txt);
+      }
+    }
+
+    function fallbackCopy(txt) {
+      const ta = document.createElement('textarea');
+      ta.value = txt;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+      showToast('Copiado: ' + txt);
+    }
+
+    // =========================================================================
+    // MÓDULO 1 — Simulador Interativo em Tempo Real
+    // =========================================================================
+    let xrayEnergized = true;
+
+    function toggleXrayState() {
+      xrayEnergized = !xrayEnergized;
+      updateM1RealtimeSim();
+    }
+
+    function updateM1RealtimeSim() {
+      const radType = document.getElementById('m1RadType').value;
+      const mat = document.getElementById('m1Material').value;
+      const thickMm = Number(document.getElementById('m1Thickness').value || 0);
+      const distCm = Number(document.getElementById('m1Distance').value || 5);
+
+      document.getElementById('m1ThicknessVal').textContent = thickMm + ' mm';
+      document.getElementById('m1DistanceVal').textContent = distCm + ' cm';
+
+      const xrayRow = document.getElementById('m1XrayControl');
+      const xrayLbl = document.getElementById('m1XrayStateLabel');
+      xrayRow.style.display = (radType === 'xray') ? 'flex' : 'none';
+      if (xrayEnergized) {
+        xrayLbl.textContent = 'ENERGIZADO (Emitindo RX)';
+        xrayLbl.style.color = '#34d399';
+      } else {
+        xrayLbl.textContent = 'DESLIGADO (Sem emissão de RX)';
+        xrayLbl.style.color = '#fbbf24';
+      }
+
+      const radNames = {
+        alpha: 'Partícula Alfa (α)',
+        beta: 'Partícula Beta (β)',
+        gamma: 'Radiação Gama (γ)',
+        xray: 'Raios X (Gerador)'
+      };
+      const matNames = {
+        ar: 'Ar',
+        papel: 'Papel',
+        aluminio_vidro: 'Alumínio / Vidro',
+        chumbo: 'Chumbo'
+      };
+
+      document.getElementById('m1NodeSource').innerHTML =
+        '<strong>Fonte</strong><br/>' + radNames[radType] +
+        (radType === 'xray' ? '<br/><span style="font-size:0.78rem; color:' + (xrayEnergized ? '#34d399' : '#fbbf24') + ';">' + (xrayEnergized ? 'Energizado' : 'Desligado') + '</span>' : '');
+
+      document.getElementById('m1NodeShield').innerHTML =
+        '<strong>Barreira</strong><br/>' + matNames[mat] + ' (' + thickMm + ' mm)<br/><span style="color:var(--text-muted); font-size:0.78rem;">Distância: ' + distCm + ' cm</span>';
+
+      let pct = 0;
+      let statusClass = 'status-blocked';
+      let statusText = '';
+
+      if (radType === 'xray' && !xrayEnergized) {
+        pct = 0;
+        statusClass = 'status-blocked';
+        statusText = 'Equipamento de Raios X DESLIGADO: por ser ativado eletricamente, não há emissão de radiação ionizante quando desligado (0,0% transmitido).';
+      } else if (radType === 'alpha') {
+        const airRangeCm = 15;
+        const airFactor = distCm > airRangeCm ? 0 : Math.pow(1 - distCm / airRangeCm, 1.5);
+        let shieldFactor = 1;
+        if (mat === 'papel' && thickMm >= 0.1) shieldFactor = 0;
+        else if (mat === 'aluminio_vidro' && thickMm >= 1) shieldFactor = 0;
+        else if (mat === 'chumbo' && thickMm >= 1) shieldFactor = 0;
+        else if (mat === 'ar') shieldFactor = thickMm >= 5 ? 0.05 : (1 - thickMm * 0.15);
+
+        pct = Math.max(0, Math.min(100, 100 * airFactor * shieldFactor));
+        if (pct < 1) {
+          pct = 0;
+          statusClass = 'status-blocked';
+          statusText = 'Partícula Alfa (α) BARRADA: alcance máximo no ar de 10 a 18 cm; bloqueada pela camada córnea da pele ou por folha de papel/material sólido. Alta radiotoxicidade se ingerida ou inalada.';
+        } else {
+          statusClass = 'status-attenuated';
+          statusText = 'Partícula Alfa (α) presente a curta distância (' + distCm + ' cm): não ultrapassa a camada córnea da pele externa, mas exige cautela contra inalação/ingestão.';
+        }
+      } else if (radType === 'beta') {
+        const geom = Math.pow(10 / Math.max(5, distCm), 1.4);
+        const coeffMap = { ar: 0.008, papel: 0.12, aluminio_vidro: 0.45, chumbo: 0.85 };
+        const mu = coeffMap[mat] || 0.01;
+        pct = Math.max(0, Math.min(100, 100 * geom * Math.exp(-mu * thickMm)));
+
+        if (pct < 5) {
+          statusClass = 'status-blocked';
+          statusText = 'Partícula Beta (β) fortemente atenuada/blindada (' + pct.toFixed(1) + '%): vidro ou alumínio e maior distância reduzem significativamente a penetração em pele e cristalino ocular.';
+        } else if (pct < 40) {
+          statusClass = 'status-attenuated';
+          statusText = 'Partícula Beta (β) parcialmente atenuada (' + pct.toFixed(1) + '%): pode atingir pele e cristalino ocular; aumentar espessura de alumínio/vidro ou distância reduz a exposição.';
+        } else {
+          statusClass = 'status-penetrating';
+          statusText = 'Exposição Beta (β) elevada (' + pct.toFixed(1) + '%): risco de lesão cutânea e no cristalino ocular; utilize blindagem de alumínio/vidro e amplie a distância.';
+        }
+      } else {
+        const geom = Math.pow(15 / Math.max(5, distCm), 1.65);
+        const coeffMap = { ar: 0.0005, papel: 0.002, aluminio_vidro: 0.018, chumbo: 0.14 };
+        const mu = coeffMap[mat] || 0.001;
+        pct = Math.max(0, Math.min(100, 100 * geom * Math.exp(-mu * thickMm)));
+
+        if (pct < 10) {
+          statusClass = 'status-blocked';
+          statusText = 'Fótons altamente atenuados (' + pct.toFixed(1) + '%): combinação de distância e/ou blindagem espessa (especialmente chumbo) reduz fortemente o feixe.';
+        } else if (pct < 45) {
+          statusClass = 'status-attenuated';
+          statusText = 'Feixe parcialmente atenuado (' + pct.toFixed(1) + '%): radiação eletromagnética de alta penetração; aplique distância, tempo reduzido e blindagem adequada.';
+        } else {
+          statusClass = 'status-penetrating';
+          statusText = 'Alto grau de penetração (' + pct.toFixed(1) + '%): radiação gama/RX pode irradiar pessoas e objetos à distância e atravessar barreiras leves.';
+        }
+      }
+
+      document.getElementById('m1NodeTarget').innerHTML =
+        '<strong>Alvo / Detector</strong><br/>Transmitido: <span style="color:#f5b924;">' + pct.toFixed(1) + '%</span>';
+      document.getElementById('m1TransmittedPct').textContent = pct.toFixed(1) + '%';
+      document.getElementById('m1ProgressFill').style.width = pct.toFixed(1) + '%';
+
+      const statusEl = document.getElementById('m1SimStatus');
+      statusEl.className = 'sim-status ' + statusClass;
+      statusEl.textContent = statusText;
+    }
+
+    // =========================================================================
+    // MÓDULO 2 — Filtro por Perfil Profissional
+    // =========================================================================
+    function filterRole(role, btn) {
+      document.querySelectorAll('#tab-m2 .pill-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      document.querySelectorAll('#roleCardsContainer .role-card').forEach(card => {
+        card.style.display = (role === 'all' || card.getAttribute('data-role') === role) ? 'block' : 'none';
+      });
+    }
+
+    // =========================================================================
+    // MÓDULO 3 — Conversores Bidirecionais REMM / SI & Time to Emesis
+    // =========================================================================
+    function clearDosimetryConverters() {
+      ['convRad', 'convGy', 'convRem', 'convSv', 'convCi', 'convBq'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      const sarBox = document.getElementById('sarBandBox');
+      sarBox.className = 'sim-status status-blocked';
+      sarBox.textContent = 'Informe um valor em rad ou Gy para ver a interpretação orientativa de SAR.';
+      document.getElementById('ciBqReadout').textContent = 'Equivalência em notação científica exibida em tempo real.';
+      showToast('Conversores limpos');
+    }
+
+    function convertRadGy(source) {
+      const radEl = document.getElementById('convRad');
+      const gyEl = document.getElementById('convGy');
+      const sarBox = document.getElementById('sarBandBox');
+
+      if (source === 'rad') {
+        const v = parseFloat(radEl.value);
+        if (isNaN(v)) {
+          gyEl.value = '';
+          sarBox.className = 'sim-status status-blocked';
+          sarBox.textContent = 'Informe um valor em rad ou Gy para ver a interpretação orientativa de SAR.';
+          return;
+        }
+        const gy = v / 100;
+        gyEl.value = Number(gy.toFixed(6));
+        renderSarInterpretation(gy);
+      } else {
+        const v = parseFloat(gyEl.value);
+        if (isNaN(v)) {
+          radEl.value = '';
+          sarBox.className = 'sim-status status-blocked';
+          sarBox.textContent = 'Informe um valor em rad ou Gy para ver a interpretação orientativa de SAR.';
+          return;
+        }
+        const rad = v * 100;
+        radEl.value = Number(rad.toFixed(4));
+        renderSarInterpretation(v);
+      }
+    }
+
+    function renderSarInterpretation(gy) {
+      const box = document.getElementById('sarBandBox');
+      if (gy < 0.7) {
+        box.className = 'sim-status status-blocked';
+        box.textContent = gy.toFixed(2) + ' Gy: Abaixo do limiar clássico de SAR aguda de corpo inteiro (~1 Gy); manter vigilância clínica e laboratorial conforme contexto.';
+      } else if (gy < 8) {
+        box.className = 'sim-status status-attenuated';
+        box.textContent = gy.toFixed(2) + ' Gy: Faixa orientativa associada à SAR Hematopoiética (limiar ~1 Gy; mais marcante acima de 2 Gy). Monitorar linfócitos a cada 6–8h e risco de infecção/sangramento.';
+      } else if (gy <= 20) {
+        box.className = 'sim-status status-penetrating';
+        box.textContent = gy.toFixed(2) + ' Gy: Faixa elevada (8–10 Gy orientativo para SAR Gastrointestinal e sobreposição hematopoiética). Suporte intensivo, hidroeletrolítico e avaliação especializada.';
+      } else {
+        box.className = 'sim-status status-penetrating';
+        box.textContent = gy.toFixed(2) + ' Gy (> 20 Gy): Faixa associada à SAR Neurovascular / Cerebrovascular de gravidade crítica. Priorizar conforto, controle sintomático e segurança da equipe.';
+      }
+    }
+
+    function convertRemSv(source) {
+      const remEl = document.getElementById('convRem');
+      const svEl = document.getElementById('convSv');
+      if (source === 'rem') {
+        const v = parseFloat(remEl.value);
+        svEl.value = isNaN(v) ? '' : Number((v / 100).toFixed(6));
+      } else {
+        const v = parseFloat(svEl.value);
+        remEl.value = isNaN(v) ? '' : Number((v * 100).toFixed(4));
+      }
+    }
+
+    function convertCiBq(source) {
+      const ciEl = document.getElementById('convCi');
+      const bqEl = document.getElementById('convBq');
+      const readout = document.getElementById('ciBqReadout');
+      const factor = 3.7e10;
+
+      if (source === 'ci') {
+        const v = parseFloat(ciEl.value);
+        if (isNaN(v)) {
+          bqEl.value = '';
+          readout.textContent = 'Equivalência em notação científica exibida em tempo real.';
+          return;
+        }
+        const bq = v * factor;
+        bqEl.value = bq;
+        readout.textContent = v + ' Ci = ' + bq.toExponential(3) + ' Bq';
+      } else {
+        const v = parseFloat(bqEl.value);
+        if (isNaN(v)) {
+          ciEl.value = '';
+          readout.textContent = 'Equivalência em notação científica exibida em tempo real.';
+          return;
+        }
+        const ci = v / factor;
+        ciEl.value = Number(ci.toPrecision(6));
+        readout.textContent = v.toExponential(3) + ' Bq = ' + ci.toExponential(3) + ' Ci';
+      }
+    }
+
+    function applyEmesisPreset() {
+      const sel = document.getElementById('emesisQuickSelect').value;
+      if (sel !== '') {
+        document.getElementById('emesisHours').value = sel;
+        estimateFromEmesis();
+      }
+    }
+
+    function estimateFromEmesis() {
+      const h = parseFloat(document.getElementById('emesisHours').value);
+      const box = document.getElementById('emesisResultBox');
+      if (isNaN(h) || h < 0) {
+        box.className = 'sim-status status-attenuated';
+        box.textContent = 'Insira o tempo em horas (ou selecione uma faixa) para estimativa clínica auxiliar.';
+        return;
+      }
+
+      if (h < 1) {
+        box.className = 'sim-status status-penetrating';
+        box.textContent = 'Time to Emesis < 1 h (' + h + ' h): Sugere exposição aguda elevada (potencialmente na faixa de doses altas / SAR severa). Registrar horário exato, iniciar suporte intensivo precoce e hemogramas seriados.';
+      } else if (h <= 2) {
+        box.className = 'sim-status status-penetrating';
+        box.textContent = 'Time to Emesis ~1–2 h (' + h + ' h): Indica resposta prodrômica precoce associada a doses relevantes de corpo inteiro. Monitorar linfócitos a cada 6–8h e avaliar biodosimetria.';
+      } else if (h <= 4) {
+        box.className = 'sim-status status-attenuated';
+        box.textContent = 'Time to Emesis ~2–4 h (' + h + ' h): Compatível com exposição moderada a relevante em avaliação clínica auxiliar. Manter acompanhamento hematológico seriado e descartar causas não radiológicas.';
+      } else {
+        box.className = 'sim-status status-blocked';
+        box.textContent = 'Time to Emesis > 4 h (' + h + ' h): Em geral associa-se a doses mais baixas ou início tardio, mas exige avaliação médica completa, hemograma seriado e investigação de outras causas de vômito.';
+      }
+    }
+
+    // =========================================================================
+    // MÓDULO 4 — Seletor Interativo de Radionuclídeos e Produtos de Interesse
+    // =========================================================================
+    const radionuclidesData = [
+      {
+        id: "I-131",
+        label: "Iodine I-131",
+        highlight: true,
+        emission: "Beta (β⁻) e Gama (γ)",
+        halfLife: "~8,02 dias",
+        targetOrgan: "Tireoide",
+        antidote: "Iodeto de Potássio (KI)",
+        posology: "Referência clássica (adultos/adolescentes): 130 mg de KI (100 mg de iodo estável) dose única diária, conforme diretriz clínica e autoridade de saúde; administrar o mais precocemente possível após exposição.",
+        note: "Eficácia máxima quando administrado antes ou logo após a inalação/ingestão de iodo radioativo; contraindicado/ajustado em condições específicas sob avaliação médica."
+      },
+      {
+        id: "Cs-137",
+        label: "Cesium Cs-137",
+        highlight: true,
+        emission: "Beta (β⁻) e Gama (γ — via Ba-137m)",
+        halfLife: "~30,17 anos",
+        targetOrgan: "Distribuição sistêmica / músculo esquelético e tecidos moles",
+        antidote: "Azul da Prússia (ferrocianeto férrico insolúvel)",
+        posology: "Referência clássica (regra geral): tipicamente 3 g/dia VO divididos (ex.: 1 g 3x/dia) por pelo menos 30 dias, podendo ser ajustada conforme carga corpórea e evolução clínica.",
+        note: "Atua no trato gastrointestinal interrompendo a circulação entero-hepática; pode causar constipação."
+      },
+      {
+        id: "Pu-239",
+        label: "Plutonium Pu-239",
+        highlight: true,
+        emission: "Alfa (α) (com baixa emissão gama/RX associada)",
+        halfLife: "~24.110 anos",
+        targetOrgan: "Ossos (superfície endosteal) e fígado",
+        antidote: "Ca-DTPA (primeiras 24h) / Zn-DTPA (manutenção)",
+        posology: "Referência clássica: 1 g de Ca-DTPA IV/nebulizado em dose única nas primeiras 24h; transicionar para 1 g/dia de Zn-DTPA a partir do 2º dia conforme indicação especializada.",
+        note: "Quelação indicada para incorporação interna (inalação/ferimento); monitorar função renal e zinco/oligoelementos."
+      },
+      {
+        id: "Am-241",
+        label: "Americium Am-241",
+        highlight: true,
+        emission: "Alfa (α) e Gama de baixa energia (~59,5 keV)",
+        halfLife: "~432,2 anos",
+        targetOrgan: "Ossos, fígado e trato respiratório (se inalado)",
+        antidote: "Ca-DTPA / Zn-DTPA",
+        posology: "Referência clássica: 1 g de Ca-DTPA nas primeiras 24h, seguido de 1 g/dia de Zn-DTPA conforme avaliação médica e bioanálise.",
+        note: "A emissão gama de ~59,5 keV auxilia detecção externa em certos cenários, mas a toxicidade principal é interna por partículas alfa."
+      },
+      {
+        id: "U-235",
+        label: "Uranium U-235 / U-238",
+        highlight: true,
+        emission: "Alfa (α) e fraca Gama",
+        halfLife: "U-235: ~7,04 × 10⁸ anos | U-238: ~4,47 × 10⁹ anos",
+        targetOrgan: "Rins (nefrotoxicidade química predominante) e ossos",
+        antidote: "Hidratação criteriosa e alcalinização urinária (ex.: Bicarbonato de Sódio) conforme protocolo clínico",
+        posology: "Referência clássica: hidratação controlada e alcalinização urinária sob monitoração eletrolítica, gasométrica e renal; DTPA não é o quelante de escolha para urânio.",
+        note: "Em compostos solúveis de urânio, a toxicidade renal química frequentemente supera o efeito radiológico imediato."
+      },
+      {
+        id: "Co-60",
+        label: "Cobalt Co-60",
+        highlight: true,
+        emission: "Beta (β⁻) e Gama (γ) de alta energia (~1,17 e 1,33 MeV)",
+        halfLife: "~5,27 anos",
+        targetOrgan: "Irradiação externa sistêmica; se interno, fígado, rins e ossos",
+        antidote: "Sem quelante específico consagrado de rotina; foco em descontaminação, remoção de fonte e suporte clínico/hematológico",
+        posology: "Referência clássica: em fontes seladas/irradiação externa, o manejo é remoção/blindagem da fonte e suporte clínico da SAR/SCR; em contaminação interna, avaliação médica especializada.",
+        note: "Fontes industriais/radioterápicas de Co-60 podem causar irradiação externa severa à distância."
+      },
+      {
+        id: "Sr-90",
+        label: "Strontium Sr-90",
+        highlight: true,
+        emission: "Beta (β⁻) pura de alta energia (via decaimento a Y-90)",
+        halfLife: "~28,8 anos",
+        targetOrgan: "Esqueleto / tecido ósseo (análogo ao cálcio)",
+        antidote: "Alginatos de sódio / sais de cálcio / antiácidos com alumínio (conforme protocolo; sem quelante clássico de alta eficácia tardia)",
+        posology: "Referência clássica: se ingestão recente e protocolo disponível, alginato de sódio (ex.: 10 g VO) para reduzir absorção intestinal de estrôncio mantendo cálcio adequado.",
+        note: "Incorpora-se ao osso; a ação é mais efetiva logo após a ingestão antes da fixação esquelética."
+      },
+      {
+        id: "H-3",
+        label: "Tritium H-3",
+        highlight: true,
+        emission: "Beta (β⁻) de baixa energia (sem emissão gama)",
+        halfLife: "~12,32 anos",
+        targetOrgan: "Água corporal total / tecidos moles",
+        antidote: "Aumento controlado da ingestão hídrica (hidratação forçada monitorada) sob orientação médica",
+        posology: "Referência clássica: aumento da ingesta hídrica (ex.: 3 a 4 L/dia em adultos hígidos sem contraindicação) para acelerar o turnover da água tritiada, com controle de sódio/balanço hídrico.",
+        note: "Risco de hiponatremia se houver excesso de água sem reposição eletrolítica ou restrição clínica."
+      },
+      {
+        id: "Po-210",
+        label: "Polonium Po-210",
+        highlight: true,
+        emission: "Alfa (α) de alta energia (emissão gama desprezível)",
+        halfLife: "~138,4 dias",
+        targetOrgan: "Baço, fígado, rins, medula óssea e trato gastrointestinal/pulmão",
+        antidote: "Sem antídoto/quelante definitivo amplamente estabelecido; foco em suporte clínico intensivo, sintomático e avaliação toxicológica",
+        posology: "Referência clássica: suporte clínico intensivo, monitoração hematológica/renal/hepática e consulta imediata a centro de referência em emergências radiológicas.",
+        note: "Extrema radiotoxicidade interna por ingestão ou inalação; não oferece risco significativo de radiação gama externa."
+      },
+      {
+        id: "Cf-252",
+        label: "Californium Cf-252",
+        highlight: false,
+        emission: "Nêutrons (fissão espontânea), Alfa (α) e Gama (γ)",
+        halfLife: "~2,645 anos",
+        targetOrgan: "Exposição mista (nêutrons/gama/alfa); se interno, osso, fígado e trato GI",
+        antidote: "Sem antídoto específico único; manejo de exposição mista nêutron-gama, descontaminação e suporte especializado",
+        posology: "Referência clássica: isolamento de fonte, avaliação de dose mista (nêutrons/gama) e suporte clínico/hematológico especializado.",
+        note: "Campos intensos de nêutrons exigem atenção especializada e avaliação de ativação induzida."
+      },
+      {
+        id: "Cm-244",
+        label: "Curium Cm-244",
+        highlight: false,
+        emission: "Alfa (α) e baixa Gama/RX",
+        halfLife: "~18,1 anos",
+        targetOrgan: "Ossos e fígado",
+        antidote: "Ca-DTPA / Zn-DTPA (conforme avaliação médica)",
+        posology: "Referência clássica: 1 g de Ca-DTPA nas primeiras 24h, seguido de 1 g/dia de Zn-DTPA conforme indicação médica especializada.",
+        note: "Comportamento metabólico e de decorporação semelhante a outros actinídeos/transurânicos."
+      },
+      {
+        id: "Ir-192",
+        label: "Iridium Ir-192",
+        highlight: false,
+        emission: "Beta (β⁻) e Gama (γ)",
+        halfLife: "~73,8 dias",
+        targetOrgan: "Irradiação externa (gamagrafia industrial); se interno, distribuição sistêmica/renal/hepática",
+        antidote: "Sem quelante específico de rotina; foco em afastamento/blindagem da fonte e tratamento de SAR/SCR",
+        posology: "Referência clássica: remoção/blindagem da fonte, descontaminação se houver contaminação e suporte clínico conforme dose/lesão.",
+        note: "Muito utilizado em fontes industriais de gamagrafia; risco relevante de queimadura radiológica localizada (SCR) por manuseio indevido."
+      },
+      {
+        id: "P-32",
+        label: "Phosphorus P-32",
+        highlight: false,
+        emission: "Beta (β⁻) pura de alta energia (sem gama)",
+        halfLife: "~14,27 dias",
+        targetOrgan: "Osso e tecidos de rápida proliferação celular (ex.: medula óssea)",
+        antidote: "Sem antídoto quelante específico; suporte hematológico e avaliação médica especializada",
+        posology: "Referência clássica: descontaminação local sem abrasão e monitoração hematológica/clínica sob orientação especializada.",
+        note: "Emissor beta puro; usar blindagem de baixa densidade (ex.: acrílico/alumínio) em vez de chumbo espesso para evitar bremsstrahlung excessivo."
+      },
+      {
+        id: "Ra-226",
+        label: "Radium Ra-226",
+        highlight: false,
+        emission: "Alfa (α) e Gama (γ) (via cadeia de decaimento com Radônio-222)",
+        halfLife: "~1.600 anos",
+        targetOrgan: "Esqueleto / tecido ósseo (análogo ao cálcio)",
+        antidote: "Suporte clínico e medidas de redução de absorção gastrointestinal quando aplicáveis sob orientação médica",
+        posology: "Referência clássica: avaliação médica especializada, controle de contaminação e suporte clínico conforme via e dose.",
+        note: "A cadeia de decaimento gera gás radônio (Rn-222) e emissores gama/alfa."
+      },
+      {
+        id: "Th-232",
+        label: "Thorium Th-232",
+        highlight: false,
+        emission: "Alfa (α) e cadeia de decaimento com emissões gama/beta",
+        halfLife: "~1,40 × 10¹⁰ anos",
+        targetOrgan: "Pulmões (se inalado), fígado, baço e ossos",
+        antidote: "Sem antídoto específico de rotina; manejo clínico, descontaminação e avaliação toxicológica/radiológica",
+        posology: "Referência clássica: descontaminação externa, suporte respiratório/clínico e acompanhamento especializado conforme via de exposição.",
+        note: "Meia-vida física extremamente longa; avaliar risco químico e radiológico conforme forma físico-química."
+      }
+    ];
+
+    let selectedNuclideId = "I-131";
+
+    function renderNuclideSelector() {
+      const bar = document.getElementById('nuclideButtonsBar');
+      bar.innerHTML = '';
+      radionuclidesData.forEach(item => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'pill-btn' + (item.id === selectedNuclideId ? ' active' : '');
+        btn.textContent = item.label;
+        btn.onclick = () => {
+          selectedNuclideId = item.id;
+          renderNuclideSelector();
+          renderNuclideDetail();
+        };
+        bar.appendChild(btn);
+      });
+      renderNuclideDetail();
+    }
+
+    function renderNuclideDetail() {
+      const item = radionuclidesData.find(n => n.id === selectedNuclideId) || radionuclidesData[0];
+      const box = document.getElementById('nuclideDetailCard');
+      box.innerHTML =
+        '<h4 style="color:#67c2ff; font-size:1.08rem; margin-bottom:10px;">' + item.label + '</h4>' +
+        '<div class="nuclide-grid-meta">' +
+          '<div class="nuclide-meta-box"><span>Emissão / Meia-Vida</span>' + item.emission + ' • ' + item.halfLife + '</div>' +
+          '<div class="nuclide-meta-box"><span>Alvo / Risco Principal</span>' + item.targetOrgan + '</div>' +
+          '<div class="nuclide-meta-box"><span>Antídoto / Conduta de Referência</span>' + item.antidote + '</div>' +
+        '</div>' +
+        '<p><strong>Posologia Clássica de Referência (Regra Geral):</strong> ' + item.posology + '</p>' +
+        '<p style="color:var(--text-muted); font-size:0.88rem;"><strong>Observação Técnica:</strong> ' + item.note + '</p>';
+    }
+
+    // =========================================================================
+    // MÓDULO 5 — Simulador Tático Interativo TCCC CBNR (MAR <-> CHE) & Tabela
+    // =========================================================================
+    const moucheRows = [
+      ["M", "Aplicação imediata de torniquete ou curativo hemostático em hemorragia maciça sob fogo ou ameaça tática.", "Controle imediato de hemorragia maciça com EPI/proteção respiratória; substituir torniquete sobre roupa por torniquete limpo na pele na Zona Morna, evitando contaminação de feridas."],
+      ["A", "Abertura manual de via aérea, cânula nasofaríngea/orofaríngea ou via aérea definitiva conforme cenário.", "Proteger via aérea contra inalação de agentes QBRN; evitar lavagens/gargarejos profundos que favoreçam ingestão; manter filtro/máscara até ambiente seguro ou descontaminação adequada."],
+      ["R", "Descompressão torácica, selo de tórax e oxigenação em lesões ventilatórias críticas.", "Avaliar insuficiência respiratória por agentes químicos/tóxicos ou fumaça/aerossóis; garantir ar respirável seguro para equipe e vítima."],
+      ["C", "Avaliação de pulso/perfusão, controle de sangramento oculto e ressuscitação volêmica/hemostática.", "Avaliar choque hipovolêmico/hemorrágico e monitorar sinais sistêmicos/hematológicos precoces; considerar antídotos/medidas específicas conforme agente identificado."],
+      ["H", "Prevenção de hipotermia por cobertores térmicos/aquecimento e avaliação de trauma cranioencefálico.", "Prevenção redobrada de hipotermia após lavagem com água morna e sabão neutro; na SAR neurovascular (> 20 Gy), observar alterações neurológicas agudas precoces."],
+      ["E¹", "Exposição completa para busca de ferimentos ocultos, curativos e preparação para evacuação.", "Remoção de roupas (remove mais de 90% da contaminação externa), lavagem cutânea sem abrasão, irrigação de feridas com soro fisiológico, swabs na 1ª hora e extração/evacuação segura."],
+      ["E²", "Reavaliação contínua, controle da dor, antibióticos/profilaxia e passagem de caso na evacuação.", "Registrar Time to Emesis, hemogramas com linfócitos a cada 6–8h, cirurgia primária em 36–48h (evitar eletivas na mielossupressão dos dias 3–50), decorporação e cadeia de custódia."]
+    ];
+
+    function renderMoucheComparison() {
+      const tbody = document.getElementById('moucheTableBody');
+      const mobileContainer = document.getElementById('moucheMobileCards');
+      if (tbody) {
+        tbody.innerHTML = moucheRows.map(([letter, conv, qbrn]) =>
+          '<tr><td><strong>' + letter + '</strong></td><td>' + conv + '</td><td>' + qbrn + '</td></tr>'
+        ).join('');
+      }
+      if (mobileContainer) {
+        mobileContainer.innerHTML = moucheRows.map(([letter, conv, qbrn]) =>
+          '<div class="card" style="background:#0c1728; margin-bottom:10px;">' +
+            '<h4 style="color:#67c2ff; margin-bottom:6px;">Etapa ' + letter + '</h4>' +
+            '<p style="font-size:0.88rem;"><strong>TCCC Convencional:</strong> ' + conv + '</p>' +
+            '<p style="font-size:0.88rem;"><strong>TCCC QBRN:</strong> ' + qbrn + '</p>' +
+          '</div>'
+        ).join('');
+      }
+    }
+
+    function updateTcccSim() {
+      const zone = document.getElementById('tcccZone').value;
+      const cond = document.getElementById('tcccCondition').value;
+      const win = document.getElementById('tcccTimeWindow').value;
+
+      const alertBox = document.getElementById('tcccAlertBox');
+      const listEl = document.getElementById('tcccChecklistItems');
+
+      let alertClass = 'status-attenuated';
+      let alertTitle = '';
+      let alertBody = '';
+
+      if (win === '3_50d') {
+        alertClass = 'status-penetrating';
+        alertTitle = 'ALERTA CRÍTICO — JANELA DE MIELOSSUPRESSÃO (DIAS 3 A 50): ';
+        alertBody = 'NÃO realizar cirurgias eletivas ou reparadoras neste período de depressão medular; priorizar controle rigoroso de infecções, isolamento protetor, hemogramas seriados e suporte hematológico.';
+      } else if (win === '1_48h') {
+        alertClass = 'status-attenuated';
+        alertTitle = 'JANELA CIRÚRGICA PRIMÁRIA (36–48 HORAS): ';
+        alertBody = 'Em lesões combinadas, garantir que as cirurgias primárias indispensáveis ocorram nas primeiras 36–48 horas, evitando postergar para a janela de mielossupressão (dias 3 a 50).';
+      } else {
+        alertClass = 'status-penetrating';
+        alertTitle = 'FASE IMEDIATA (0 A 1 HORA) — REGRA DE OURO: ';
+        alertBody = 'A vida da vítima vem sempre em primeiro lugar (ABCDE / MARCHE²). Posicionar contra o vento e em local elevado, proteger vias aéreas/EPI e coletar swabs nasais/orais na 1ª hora quando aplicável.';
+      }
+
+      if (zone === 'hot') {
+        alertBody += ' | Postura MAR (Zona Quente): proteção respiratória/EPI imediata, controle de hemorragia exsanguinante e extração tática rápida para a Zona Morna.';
+      } else if (zone === 'warm') {
+        alertBody += ' | Postura CHE (Zona Morna): Nível C de EPI, remoção de roupas (> 90% da contaminação externa), água morna e sabão neutro sem abrasão nem hipotermia.';
+      } else {
+        alertBody += ' | Postura CHE (Zona Fria): Nível D no PSA limpo, antídotos/decorporantes conforme indicação, cadeia de custódia e acompanhamento clínico/hematológico.';
+      }
+
+      alertBox.className = 'sim-status ' + alertClass;
+      alertBox.innerHTML = '<strong>' + alertTitle + '</strong>' + alertBody;
+
+      const tasks = [
+        "Garantir segurança da cena, posicionamento contra o vento (upwind) e em local elevado (uphill).",
+        "Priorizar suporte vital (ABCDE / MARCHE²) antes de coletas ou registros.",
+        cond === 'hemorrhage' || cond === 'combined'
+          ? "Estancar hemorragia exsanguinante e aplicar/revisar torniquete (direto na pele na Zona Morna)."
+          : "Avaliar via aérea, respiração e circulação sem expor a equipe a contaminantes.",
+        cond === 'contaminated' || cond === 'combined'
+          ? "Remover vestimentas na Zona Morna e lavar pele com água morna e sabão neutro (evitar hipotermia e abrasão)."
+          : "Diferenciar irradiação externa de contaminação para evitar medidas desnecessárias.",
+        win === '0_1h'
+          ? "Coletar swabs nasais/orais na 1ª hora pós-evento e registrar horário exato do início dos vômitos (Time to Emesis)."
+          : "Acompanhar hemograma com linfócitos a cada 6–8h e respeitar janela cirúrgica (36–48h) / restrição de eletivas (dias 3–50).",
+        "Acondicionar pertences/amostras em invólucro opaco e seco com metadados e cadeia de custódia (após estabilização)."
+      ];
+
+      listEl.innerHTML = tasks.map((t, i) =>
+        '<label class="checklist-item"><input type="checkbox" id="tcccChk_' + zone + '_' + i + '" /><span>' + t + '</span></label>'
+      ).join('');
+    }
+
+    // =========================================================================
+    // MÓDULO 6 — Avaliador MOPP / EPI
+    // =========================================================================
+    function evaluateMopp() {
+      const level = document.getElementById('moppLevel').value;
+      const heat = document.getElementById('moppHeat').value;
+      const out = document.getElementById('moppOutput');
+
+      const map = {
+        '0': {
+          epi: 'Nível D (equipamento de rotina / uniforme operacional)',
+          desc: 'Sem ameaça ativa imediata; manter prontidão de equipamento e vigilância ambiental.'
+        },
+        '1': {
+          epi: 'Nível D / Prontidão MOPP 1',
+          desc: 'Risco potencial; manter equipamento NBQR acessível e revisar segurança da cena e rotas.'
+        },
+        '2': {
+          epi: 'Nível D preparado para transição rápida',
+          desc: 'Ameaça provável; máscara e proteção de extremidades prontas para colocação imediata.'
+        },
+        '3': {
+          epi: 'Nível C (Zona Morna / Descontaminação)',
+          desc: 'Proteção respiratória filtrante adequada + vestimenta/luvas de barreira (luvas de nitrila, troca externa a cada 20 min); evitar hipotermia e abrasão no paciente.'
+        },
+        '4': {
+          epi: 'Máxima Proteção (Zona Quente / Alta Concentração)',
+          desc: 'Proteção respiratória e corporal máxima conforme avaliação de risco/perigo; garantir entrada apenas com segurança e objetivo tático/suporte vital.'
+        }
+      };
+
+      const item = map[level];
+      const heatWarning = heat === 'hot'
+        ? '<p style="color:#fbbf24; margin-top:8px;"><strong>Alerta Térmico:</strong> Clima quente ou esforço intenso eleva o risco de estresse térmico e desidratação com EPI/MOPP. Realizar rodízio de equipe, hidratação segura fora da zona contaminada e monitoração de sinais de exaustão térmica.</p>'
+        : '<p style="color:#93c5fd; margin-top:8px;"><strong>Atenção Operacional:</strong> Executar paramentação e desparamentação rigorosa (Nível C na Zona Morna; Nível D na Zona Fria) sem comprometer o suporte vital.</p>';
+
+      out.innerHTML =
+        '<div class="nuclide-grid-meta" style="margin-bottom:8px;">' +
+          '<div class="nuclide-meta-box"><span>Postura / Nível</span>' + item.epi + '</div>' +
+          '<div class="nuclide-meta-box"><span>Estresse Térmico</span>' + (heat === 'hot' ? 'Elevado (rodízio e hidratação)' : 'Moderado / Controlado') + '</div>' +
+        '</div>' +
+        '<p>' + item.desc + '</p>' + heatWarning;
+    }
+
+    // =========================================================================
+    // MÓDULO 7 — Gerador de Fichas POP (Anexos B a H)
+    // =========================================================================
+    function generatePopSheet() {
+      const annex = document.getElementById('popAnnex').value;
+      const victim = document.getElementById('popVictim').value || 'Não informado';
+      const scenario = document.getElementById('popScenario').value;
+      const emesis = document.getElementById('popEmesis').value || 'Não registrado';
+      const loc = document.getElementById('popLocation').value || 'Não informado';
+      const custody = document.getElementById('popCustody').value || 'Não informado';
+      const notes = document.getElementById('popNotes').value || 'Sem observações adicionais.';
+      const now = new Date().toLocaleString('pt-BR');
+
+      const txt = [
+        '=== ' + annex.toUpperCase() + ' ===',
+        'Data/Hora do Registro: ' + now,
+        'Vítima / Item / Ocorrência: ' + victim,
+        'Cenário / Classificação: ' + scenario,
+        'Hora Início Náuseas/Vômitos (Time to Emesis): ' + emesis,
+        'Localização / Orientação / Barreiras: ' + loc,
+        'Invólucro / Custódia / Transferência: ' + custody,
+        'Condições Ambientais e Observações: ' + notes,
+        'Aviso: Suporte vital (ABCDE / MARCHE²) sempre prioritário; dosimetria de pertences não define isoladamente dose, prognóstico ou conduta.'
+      ].join('\n');
+
+      document.getElementById('popPreview').textContent = txt;
+    }
+
+    function copyPopSheet() {
+      const el = document.getElementById('popPreview');
+      if (!el.textContent.trim()) generatePopSheet();
+      copyText(el.textContent);
+    }
+
+    function clearPopSheet() {
+      ['popVictim', 'popEmesis', 'popLocation', 'popCustody', 'popNotes'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('popPreview').textContent = '';
+      showToast('Ficha limpa');
+    }
+
+    // =========================================================================
+    // MÓDULO 8 — Glossário
+    // =========================================================================
+    const glossaryData = [
+      ["ABCDE", "Sequência primária de avaliação e suporte à vida no trauma e emergências (Via aérea, Respiração, Circulação, Estado neurológico, Exposição/ambiente)."],
+      ["Al₂O₃ (Óxido de Alumínio)", "Material dielétrico/cerâmico empregado em dosimetria luminescente e componentes eletrônicos, sujeito à caracterização de matriz."],
+      ["Atividade", "Taxa de transformações nucleares espontâneas por segundo de um radionuclídeo, medida no SI em Becquerel (Bq)."],
+      ["Autoblindagem (Self-Shielding)", "Atenuação da radiação incidente pelos próprios tecidos/estruturas anatômicas ou barreiras intermediárias, alterando a dose local."],
+      ["Azul da Prússia", "Agente decorporante (ferrocianeto férrico insolúvel) utilizado para reduzir a absorção intestinal de césio (ex.: Césio-137) conforme indicação médica."],
+      ["Becquerel (Bq)", "Unidade do Sistema Internacional (SI) para atividade radioativa: 1 Bq equivale a 1 decaimento/transformação nuclear por segundo."],
+      ["Biodosimetria Citogenética", "Estimativa biológica de dose absorvida baseada na análise de aberrações cromossômicas (como cromossomos dicêntricos) em linfócitos; cultivo tipicamente em torno de 48h ou mais."],
+      ["Bleaching Ótico", "Redução ou perda prematura de sinal luminescente (como em OSL) causada por exposição à luz visível ou ultravioleta antes da leitura."],
+      ["BtIDefNBQR", "Batalhão de Defesa Nuclear, Biológica, Química e Radiológica da Marinha do Brasil."],
+      ["Ca-DTPA / Zn-DTPA", "Agentes quelantes empregados na terapia de decorporação de determinados radionuclídeos transurânicos/actinídeos (ex.: plutônio, amerício) sob prescrição médica."],
+      ["Cadeia de Custódia", "Registro formal, contínuo e rastreável da coleta, acondicionamento, transporte, transferência e recebimento de amostras ou pertences periciais (rastreabilidade, integridade/identificação e registro de transferência)."],
+      ["CBNR", "Sigla em português para Químico, Biológico, Nuclear e Radiológico (equivalente a NBQR)."],
+      ["CHE", "Conceito operacional aplicado nas fases de atendimento/descontaminação/evacuação fora da ameaça imediata direta da Zona Quente."],
+      ["CNEN", "Comissão Nacional de Energia Nuclear, órgão regulador e de pesquisa em energia nuclear e radioproteção no Brasil."],
+      ["C-MOPM", "Centro de Medicina Operativa da Marinha, organização militar ligada à medicina operativa da Marinha do Brasil."],
+      ["Contaminação Externa", "Presença indesejada de material radioativo sobre a pele, cabelos, vestimentas ou superfícies/objetos."],
+      ["Contaminação Interna", "Incorporação de radionuclídeos ao organismo por inalação, ingestão, ferimentos abertos ou absorção cutânea."],
+      ["CRESS", "Mnemônico operacional estruturado em etapas de contenção/segurança, reconhecimento/proteção, evacuação/descontaminação, suporte clínico e sustentação/custódia."],
+      ["Cromossomo Dicêntrico", "Aberração cromossômica instável com dois centrômeros formada após reparo inadequado de quebras de fita dupla de DNA, usada na biodosimetria."],
+      ["CTMSP", "Centro Tecnológico da Marinha em São Paulo, vinculado ao desenvolvimento nuclear e tecnológico da Marinha do Brasil."],
+      ["DDR", "Dispositivo de Dispersão Radiológica, artefato concebido para dispersar material radioativo sem detonação nuclear (também chamado de 'bomba suja')."],
+      ["Decaimento Radioativo", "Transformação espontânea de um núcleo instável em outro estado ou isótopo, com redução progressiva da atividade ao longo do tempo."],
+      ["Decorporação", "Conduta médica especializada para acelerar a eliminação de radionuclídeos incorporados internamente ao organismo."],
+      ["Dose Absorvida", "Energia transferida pela radiação ionizante por unidade de massa da matéria (J/kg), medida em Gray (Gy) no SI ou rad (unidade antiga)."],
+      ["DRADE", "Sequência didática operacional: Descontaminação Precoce, Reconhecimento, Antídotos/Medidas Específicas, Descontaminação Completa e Evacuação."],
+      ["Efeito Determinístico", "Reação tecidual da radiação com limiar de dose definido e gravidade que aumenta com a dose (ex.: SAR e SCR)."],
+      ["Efeito Estocástico", "Efeito probabilístico da radiação (como carcinogênese e efeitos hereditários) cuja probabilidade depende da dose, sem limiar clínico agudo único."],
+      ["Emergência Nuclear", "Evento envolvendo instalações, reatores ou materiais nucleares com risco de liberação ou exposição radiológica."],
+      ["Emergência Radiológica", "Evento envolvendo fontes ou materiais radioativos fora de controle, sem envolver reator nuclear em operação."],
+      ["EPR", "Ressonância Paramagnética Eletrônica, técnica espectroscópica que detecta radicais livres/espécies paramagnéticas em matrizes como esmalte dentário e unhas."],
+      ["Fading Térmico", "Perda ou decaimento espontâneo do sinal armazenado em poços de potencial devido à temperatura e ao tempo."],
+      ["Fóton", "Pacote elementar de energia eletromagnética sem carga elétrica e sem massa de repouso, presente em raios X e radiação gama."],
+      ["Gray (Gy)", "Unidade do SI de dose absorvida: 1 Gy = 1 J/kg (equivale a 100 rad)."],
+      ["IAEA", "Agência Internacional de Energia Atômica (International Atomic Energy Agency), referência internacional em segurança e resposta radiológica."],
+      ["IDQBRN", "Instituto de Defesa Química, Biológica, Radiológica e Nuclear do Exército Brasileiro."],
+      ["Iodeto de Potássio (KI)", "Antídoto/agente bloqueador da tireoide utilizado em exposições ao iodo radioativo conforme indicação médica e diretriz oficial."],
+      ["Ionização", "Processo em que a radiação remove elétrons de átomos ou moléculas, formando íons ou pares iônicos."],
+      ["IPEN", "Instituto de Pesquisas Energéticas e Nucleares, instituição de pesquisa e capacidade laboratorial em São Paulo."],
+      ["IRD", "Instituto de Radioproteção e Dosimetria, unidade da CNEN referência em dosimetria, metrologia das radiações e biodosimetria."],
+      ["Irradiação Externa", "Exposição de pessoa ou objeto a um campo de radiação proveniente de fonte externa, sem material radioativo depositado ou incorporado."],
+      ["Linfopenia", "Queda na contagem de linfócitos no sangue periférico, parâmetro relevante no acompanhamento hematológico seriado após exposição aguda."],
+      ["MAR", "Conceito operacional voltado à atuação sob ameaça ativa / Zona Quente, com proteção imediata, avaliação da ameaça, controle de hemorragia e extração rápida."],
+      ["MARCHE", "Mnemônico de atendimento tático ao trauma: Hemorragia maciça, Via aérea, Respiração, Circulação, Hipotermia/Cabeça, Ferimentos/Exposição (expandido para MARCHE²)."],
+      ["Meia-Vida Física", "Tempo necessário para que a atividade de uma amostra de radionuclídeo caia à metade do seu valor inicial por decaimento radioativo."],
+      ["Metadados Dosimétricos", "Informações contextuais (identificação/vínculo, cronologia/duração, posição/orientação/barreiras e histórico de luz/calor/umidade/químicos/custódia) essenciais para interpretar amostras."],
+      ["Mielossupressão", "Depressão da atividade da medula óssea com redução de células sanguíneas; cirurgias eletivas devem ser evitadas no período crítico (dias 3 a 50)."],
+      ["Monte Carlo (Modelagem)", "Simulação computacional baseada na geometria do cenário, fonte, blindagens e metadados para reconstruir distribuição de dose e apoiar a interpretação física."],
+      ["MOPP", "Mission-Oriented Protective Posture: postura protetora orientada à missão, escalonada por níveis conforme ameaça NBQR e carga de trabalho."],
+      ["NaCl", "Cloreto de sódio, sal cristalino estudado em dosimetria retrospectiva por TL/OSL e altamente sensível à dissolução por água/umidade."],
+      ["NBQR", "Sigla para Nuclear, Biológica, Química e Radiológica."],
+      ["Nêutron", "Partícula subatômica sem carga elétrica; exige avaliação especializada e pode associar-se à ativação induzida em campos intensos."],
+      ["Nível C de EPI", "Nível de proteção com proteção respiratória purificadora de ar adequada e vestimenta/luvas de barreira, empregado na Zona Morna."],
+      ["Nível D de EPI", "Nível de proteção básico/rotina (ex.: área limpa/PSA limpo) quando não há risco de contaminação atmosférica ou respingos perigosos."],
+      ["OSL", "Optically Stimulated Luminescence (Luminescência Oticamente Estimulada): leitura de sinal latente por estímulo luminoso em laboratório."],
+      ["Partícula Alfa (α)", "Partícula ionizante pesada de curto alcance no ar (máx. 10 a 18 cm), barrada pela camada córnea ou folha de papel; alta radiotoxicidade interna."],
+      ["Partícula Beta (β)", "Elétron ou pósitron com penetração maior que alfa, capaz de atingir pele e cristalino ocular; blindável por vidro ou alumínio."],
+      ["Poços de Potencial (Traps)", "Defeitos ou impurezas em sólidos cristalinos/amorfos que aprisionam elétrons excitados pela radiação até estimulação óptica ou térmica."],
+      ["PSA", "Posto de Saúde Avançado, estrutura móvel de triagem e estabilização inicial em emergências ou incidentes com múltiplas vítimas."],
+      ["Rad", "Unidade antiga de dose absorvida; 1 Gy equivale a 100 rad."],
+      ["Radiação Gama (γ)", "Radiação eletromagnética de alta energia e curto comprimento de onda, altamente penetrante, capaz de irradiar à distância."],
+      ["Radiação Não Ionizante", "Radiação sem energia suficiente para ionizar diretamente átomos/moléculas em interações simples."],
+      ["Radiotoxicidade", "Potencial de dano biológico de um radionuclídeo quando incorporado ao organismo por inalação, ingestão, ferimentos ou pele."],
+      ["Raios X", "Radiação eletromagnética ionizante semelhante à gama; em aparelhos geradores ocorre apenas quando energizados/ativados."],
+      ["REMM", "Radiation Emergency Medical Management, base de diretrizes clínicas e de descontaminação para emergências radiológicas."],
+      ["SAR", "Síndrome Aguda da Radiação: quadro clínico e laboratorial decorrente de irradiação aguda externa de corpo inteiro acima do limiar (em torno de 1 Gy), com fases prodrômica, latente, manifesta e recuperação/óbito."],
+      ["SCR", "Síndrome Cutânea da Radiação: alterações patológicas na pele e tecidos subjacentes produzidas por doses elevadas de radiação ionizante."],
+      ["Sievert (Sv)", "Unidade do SI para grandezas de proteção radiológica (dose equivalente e dose efetiva), não intercambiável diretamente com Gray (Gy)."],
+      ["Time to Emesis", "Intervalo de tempo entre a exposição à radiação e o início dos vômitos, útil como marcador clínico auxiliar na avaliação da SAR."],
+      ["UFS", "Universidade Federal de Sergipe, instituição com pesquisas em luminescência (OSL/TL) aplicadas a materiais diversos."],
+      ["USP", "Universidade de São Paulo, instituição com pesquisa em Ressonância Paramagnética Eletrônica (EPR) em matrizes como esmalte dentário e unhas."]
+    ];
+
+    let selectedLetter = 'ALL';
+
+    function buildAlphabetBar() {
+      const bar = document.getElementById('alphabetBar');
+      const letters = ['ALL', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
+      bar.innerHTML = '';
+      letters.forEach(l => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'alpha-btn' + (selectedLetter === l ? ' active' : '');
+        btn.textContent = l === 'ALL' ? 'Todos' : l;
+        btn.onclick = () => {
+          selectedLetter = l;
+          buildAlphabetBar();
+          renderGlossary();
+        };
+        if (l === 'ALL') btn.style.width = 'auto';
+        bar.appendChild(btn);
+      });
+    }
+
+    function renderGlossary() {
+      const q = (document.getElementById('glossarySearch').value || '').trim().toLowerCase();
+      const listEl = document.getElementById('glossaryList');
+      document.getElementById('glossaryTotalCount').textContent = glossaryData.length;
+
+      const filtered = glossaryData.filter(([term, def]) => {
+        const matchLetter = selectedLetter === 'ALL' || term.toUpperCase().startsWith(selectedLetter);
+        const matchQuery = !q || term.toLowerCase().includes(q) || def.toLowerCase().includes(q);
+        return matchLetter && matchQuery;
+      });
+
+      document.getElementById('glossaryFilteredCount').textContent = filtered.length;
+
+      if (!filtered.length) {
+        listEl.innerHTML = '<div class="card"><p>Nenhum verbete encontrado para o filtro selecionado.</p></div>';
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(([term, def]) =>
+        '<div class="glossary-item"><div class="glossary-term">' + term + '</div><div class="glossary-def">' + def + '</div></div>'
+      ).join('');
+    }
+
+    // =========================================================================
+    // SHOW DA RADIAÇÃO — 30 Questões, Alternativas Embaralhadas, Geiger CPS
+    // Acelerando, Sirene Industrial Contínua nos Últimos 5s e Explosão no 0s
+    // =========================================================================
+    const rawRadiationQuestions = [
+      { q: "Qual é o alcance máximo aproximado de partículas alfa no ar segundo o material?", opts: ["Poucos centímetros, no máximo de 10 a 18 cm.", "Até 50 metros ao ar livre em campo aberto.", "Atravessa 20 cm de chumbo sem atenuação.", "Não possui limite de alcance no ar atmosférico."], ans: 0, exp: "Partículas alfa percorrem apenas poucos centímetros no ar, no máximo de 10 a 18 cm, sendo barradas pela camada córnea ou por uma folha de papel." },
+      { q: "Qual material pode bloquear partículas alfa externamente?", opts: ["Uma folha de papel ou a camada córnea da pele.", "Apenas 30 cm de concreto armado denso.", "Apenas chumbo de 10 cm de espessura.", "Nenhuma barreira física bloqueia partículas alfa."], ans: 0, exp: "A camada córnea da pele ou até uma folha de papel impedem a progressão externa das partículas alfa." },
+      { q: "Quando as partículas alfa oferecem maior risco à saúde humana?", opts: ["Quando o material radioativo é ingerido ou inalado.", "Apenas quando observadas à distância com binóculo.", "Quando há apenas irradiação externa a 5 metros.", "Nunca oferecem risco relevante em nenhuma via."], ans: 0, exp: "Fora do corpo têm baixo alcance externo, mas apresentam grande radiotoxicidade quando incorporadas por ingestão, inalação ou ferimentos." },
+      { q: "Qual estrutura ocular é especialmente vulnerável às partículas beta?", opts: ["O cristalino ocular.", "Apenas a córnea externa sem dano interno.", "O nervo óptico exclusivamente por radiação térmica.", "Nenhuma estrutura ocular é afetada por beta."], ans: 0, exp: "Partículas beta têm maior penetração que alfa e, ao atingirem os olhos, podem lesionar o cristalino ocular." },
+      { q: "Quais materiais são citados para blindagem de partículas beta?", opts: ["Vidro ou alumínio.", "Apenas água destilada em camada fina.", "Apenas ar atmosférico seco.", "Apenas tecido leve de algodão."], ans: 0, exp: "Partículas beta podem ser blindadas por material denso como vidro ou alumínio." },
+      { q: "Sobre fontes de raios X, qual afirmação está correta?", opts: ["Só emitem radiação ionizante quando ativadas eletricamente.", "Continuam emitindo fortemente mesmo após desligadas.", "São partículas alfa de curto alcance no ar.", "Não produzem ionização em nenhuma circunstância."], ans: 0, exp: "Fontes de raios X só emitem radiação ionizante no momento da realização de exames, por serem ativadas eletricamente." },
+      { q: "O que define a meia-vida física de um radioisótopo?", opts: ["O tempo para a atividade cair à metade do valor inicial.", "O tempo para dobrar a massa atômica do elemento.", "O tempo exato de duração de um exame de RX.", "O dobro do tempo de exposição do paciente."], ans: 0, exp: "Meia-vida é o tempo necessário para que a atividade de uma amostra radioativa se reduza à metade do seu valor inicial por decaimento." },
+      { q: "O que representa 1 Gray (Gy) no Sistema Internacional?", opts: ["1 joule de energia absorvida por quilograma de matéria (J/kg).", "100 joules por grama de ar atmosférico.", "1 decaimento nuclear por segundo de atividade.", "Apenas dose equivalente de proteção em sieverts."], ans: 0, exp: "1 Gray (Gy) equivale a 1 joule de energia de radiação ionizante absorvida por quilograma de matéria (1 J/kg; 100 rad)." },
+      { q: "O que caracteriza uma radiação ionizante?", opts: ["Energia suficiente para liberar elétrons de átomos e criar íons.", "Ausência total de interação com a matéria biológica.", "Frequência inferior às ondas de rádio domésticas.", "Capacidade de iluminar ambientes sem transferência de energia."], ans: 0, exp: "Radiações ionizantes possuem energia suficiente para ejetar elétrons da camada orbital, criando pares de íons." },
+      { q: "Quais são as três formas da Síndrome Aguda da Radiação (SAR)?", opts: ["Hematopoiética (~1 Gy), gastrointestinal (8–10 Gy) e neuro/cerebrovascular (> 20 Gy).", "Cutânea, ocular e auditiva periférica.", "Leve, moderada e subclínica transitória.", "Térmica, química e mecânica traumática."], ans: 0, exp: "As três formas da SAR são hematopoiética/hematológica (~1 Gy), gastrointestinal (8–10 Gy) e neuro/cerebrovascular (> 20 Gy)." },
+      { q: "O que é a Síndrome Cutânea da Radiação (SCR)?", opts: ["Manifestações patológicas na pele e estruturas subjacentes por doses acima de limiares.", "Infecção bacteriana hospitalar tardia por cateter.", "Reação alérgica local a sabão neutro.", "Perda de memória transitória por estresse."], ans: 0, exp: "A SCR envolve alterações patológicas na pele e tecidos subjacentes decorrentes de doses externas acima de limiares." },
+      { q: "Qual é a Regra de Ouro da resposta a emergências radiológicas?", opts: ["A vida da vítima vem sempre em primeiro lugar (ABCDE/suporte vital antes de coletas).", "Coletar objetos pessoais antes de estancar hemorragia.", "Adiar via aérea e respiração para preencher fichas.", "Ignorar sinais vitais até monitorar pertences."], ans: 0, exp: "A preservação da vida e o suporte imediato antecedem qualquer coleta de objeto ou preenchimento de ficha." },
+      { q: "Paciente exposto apenas a raios X ou gama externa, sem contaminação, é fonte de contaminação para a equipe?", opts: ["Não; na irradiação externa sem contaminação associada não há transmissão de contaminação.", "Sim; sempre contamina todos os socorristas ao redor.", "Sim; permanece contaminante por até 30 dias.", "Apenas se estiver usando vestimenta de algodão."], ans: 0, exp: "Na irradiação externa convencional sem contaminação associada, o paciente não é fonte de contaminação para a equipe." },
+      { q: "Qual percentual aproximado da contaminação externa é eliminado ao remover todas as vestimentas?", opts: ["Mais de 90% da contaminação externa.", "Menos de 5% da contaminação superficial.", "Exatamente 25% da contaminação externa.", "Nenhum percentual é reduzido sem antídoto."], ans: 0, exp: "A remoção completa das vestimentas na Zona Morna elimina mais de 90% da contaminação externa." },
+      { q: "Como deve ser feita a lavagem da pele íntegra e de feridas na descontaminação?", opts: ["Água morna e sabão neutro na pele; soro fisiológico em feridas, sem abrasão ou hipotermia.", "Escova de cerdas duras e solventes químicos fortes.", "Água gelada em grande volume sem controle térmico.", "Álcool concentrado diretamente sobre ferimentos abertos."], ans: 0, exp: "Deve-se usar água morna e sabão neutro sem fricção abrasiva, irrigar feridas com soro fisiológico e prevenir hipotermia." },
+      { q: "Em qual janela temporal os enfermeiros coletam swabs nasais/orais pós-evento conforme o material?", opts: ["Na 1ª hora pós-evento.", "Após 15 dias do evento inicial.", "Apenas no momento da alta hospitalar.", "Após 72 horas sem qualquer exceção."], ans: 0, exp: "A coleta de swabs nasais/orais ocorre na 1ª hora pós-evento para avaliar contaminação inalatória." },
+      { q: "Em qual janela devem ocorrer cirurgias primárias em lesões combinadas, evitando cirurgias eletivas na mielossupressão?", opts: ["Cirurgias primárias nas primeiras 36–48h; evitar eletivas na mielossupressão (dias 3 a 50).", "Cirurgias eletivas no dia 10 de mielossupressão.", "Apenas após 6 meses do evento radiológico.", "Nunca realizar cirurgia primária em trauma combinado."], ans: 0, exp: "Cirurgias primárias devem ocorrer nas primeiras 36–48 horas, evitando cirurgias eletivas durante a mielossupressão (dias 3 a 50)." },
+      { q: "Por que os médicos registram o horário exato do início dos vômitos?", opts: ["Para estimativa clínica de dose pelo marcador Time to Emesis.", "Para definir a cor do uniforme da equipe de apoio.", "Para dispensar hemogramas seriados posteriores.", "Para substituir a avaliação primária ABCDE."], ans: 0, exp: "O registro do início dos vômitos (Time to Emesis) auxilia na estimativa clínica de dose e evolução da SAR." },
+      { q: "Qual a frequência de solicitação de hemograma com contagem de linfócitos citada para acompanhamento médico?", opts: ["A cada 6–8 horas.", "A cada 7 dias corridos.", "Apenas uma única coleta no primeiro mês.", "A cada 30 minutos durante 10 dias."], ans: 0, exp: "Solicita-se hemograma com contagem de linfócitos a cada 6–8 horas e biodosimetria citogenética." },
+      { q: "Qual agente/antídoto é indicado para bloqueio em exposições ao Iodo-131 (conforme protocolo)?", opts: ["KI (Iodeto de Potássio).", "Sabão neutro de uso cutâneo.", "Soro glicosado isolado sem avaliação.", "Torniquete tático de extremidade."], ans: 0, exp: "O Iodeto de Potássio (KI) atua no bloqueio tireoidiano frente ao Iodo-131 conforme indicação médica." },
+      { q: "Qual agente é associado ao Césio-137 para interromper sua circulação entero-hepática?", opts: ["Azul da Prússia.", "Ca-DTPA exclusivamente em dose única.", "Ácido clorídrico diluído.", "Luz ultravioleta de bancada."], ans: 0, exp: "O Azul da Prússia liga-se ao césio no trato gastrointestinal, interrompendo a circulação entero-hepática." },
+      { q: "Qual agente quelante é citado para Plutônio / transurânicos?", opts: ["Ca-DTPA (ou Zn-DTPA conforme protocolo).", "Glicerina tópica simples.", "Parafina líquida oral.", "Solução salina hipertônica isolada."], ans: 0, exp: "O Ca-DTPA (e Zn-DTPA) é utilizado na decorporação de radionuclídeos como o plutônio sob indicação médica." },
+      { q: "O que é bleaching ótico na dosimetria retrospectiva por luminescência?", opts: ["Perda ou redução do sinal por exposição à luz visível ou UV antes da leitura.", "Aumento artificial do sinal por resfriamento rápido.", "Transformação de chumbo em ouro metálico.", "Calibração automática do detector de campo."], ans: 0, exp: "O bleaching ótico esvazia armadilhas de elétrons pela luz, reduzindo o sinal OSL/TL e podendo subestimar a dose." },
+      { q: "O que é fading térmico?", opts: ["Perda ou decaimento espontâneo do sinal armazenado devido à temperatura e ao tempo.", "Aumento da meia-vida física do radioisótopo.", "Secagem da pele por ventilação ambiental.", "Filtragem de ar em máscara facial."], ans: 0, exp: "Fading térmico é o esvaziamento térmico de armadilhas/poços de potencial dependente de temperatura e tempo." },
+      { q: "Como devem ser acondicionados objetos de interesse dosimétrico após liberação clínica e de segurança?", opts: ["Em invólucro opaco, seco e compatível com a amostra, longe de calor e umidade.", "Em saco plástico transparente exposto ao sol.", "Submersos em água para resfriamento imediato.", "Ao lado de fontes térmicas ou equipamentos quentes."], ans: 0, exp: "Devem ir em invólucro opaco, seco e compatível com a amostra, protegidos de luz, calor e umidade." },
+      { q: "Resultados de dosimetria retrospectiva de pertences podem ser usados isoladamente para prognóstico ou conduta?", opts: ["Não; são complementares e não devem ser usados isoladamente para dose, prognóstico ou conduta.", "Sim; substituem integralmente a avaliação médica.", "Sim; dispensam exames clínicos e laboratoriais.", "Sim; definem sozinhos o prognóstico final."], ans: 0, exp: "A dosimetria retrospectiva de objetos pessoais é complementar e nunca deve ser usada isoladamente para prognóstico ou conduta." },
+      { q: "Onde devem ser estabelecidos os postos de socorristas/primeiros respondedores em relação ao vento e relevo?", opts: ["Contra o vento (upwind) e em local elevado (uphill).", "A favor do vento no ponto mais baixo do terreno.", "Diretamente sobre a fonte emissora sem afastamento.", "Sem critério de direção do vento ou relevo."], ans: 0, exp: "Os postos devem ser posicionados contra o vento (upwind) e em local elevado (uphill)." },
+      { q: "Qual a sigla correta para a postura protetora orientada à missão estudada no Módulo 6?", opts: ["MOPP.", "MOP.", "MPO.", "MPQ."], ans: 0, exp: "A sigla correta é MOPP (Mission-Oriented Protective Posture)." },
+      { q: "Com que frequência deve ser descartada a camada externa de luvas duplas/triplas de nitrila conforme o Card 1?", opts: ["A cada 20 minutos.", "A cada 8 horas de plantão.", "Apenas no encerramento do dia seguinte.", "Nunca descartar durante o atendimento."], ans: 0, exp: "O Card Operacional 1 orienta usar luvas duplas/triplas de nitrila e descartar a camada externa a cada 20 minutos." },
+      { q: "Qual é a diferença essencial entre emergência radiológica e emergência nuclear?", opts: ["Radiológica envolve fontes/materiais fora de controle sem reator; nuclear envolve instalações/reatores nucleares.", "São exatamente o mesmo evento sem distinção.", "Radiológica ocorre apenas em usinas nucleares.", "Nuclear não envolve risco de exposição radiológica."], ans: 0, exp: "Emergência radiológica envolve fontes ou materiais radioativos fora de controle (sem reator em operação), enquanto emergência nuclear envolve instalações, reatores ou materiais nucleares." }
+    ];
+
+    function shuffleQuestionOptions(qObj) {
+      const indexed = qObj.opts.map((text, origIdx) => ({
+        text,
+        isCorrect: origIdx === qObj.ans
+      }));
+      for (let i = indexed.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = indexed[i];
+        indexed[i] = indexed[j];
+        indexed[j] = tmp;
+      }
+      const newAns = indexed.findIndex(item => item.isCorrect);
+      return {
+        q: qObj.q,
+        opts: indexed.map(item => item.text),
+        ans: newAns,
+        exp: qObj.exp
+      };
+    }
+
+    let gameState = {
+      deck: [],
+      index: 0,
+      score: 0,
+      timeLeft: 20,
+      answered: false
+    };
+
+    let countdownInterval = null;
+    let geigerBurstTimeout = null;
+    let sirenOsc = null;
+    let sirenLfo = null;
+    let sirenGain = null;
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function ensureAudioCtx() {
+      if (!audioCtx) {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (Ctx) audioCtx = new Ctx();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+      }
+    }
+
+    function toggleAudioEngine() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('hudSoundState').textContent = soundEnabled ? 'Ativo' : 'Mudo';
+      if (!soundEnabled) {
+        stopSoundEffects();
+      } else {
+        ensureAudioCtx();
+        if (!gameState.answered && currentTab === 'game' && gameState.deck.length > 0) {
+          scheduleGeigerBurstLoop();
+          if (gameState.timeLeft <= 5 && gameState.timeLeft > 0) {
+            startIndustrialSiren();
+          }
+        }
+      }
+      showToast(soundEnabled ? 'Áudio Geiger/Sirene ativado' : 'Áudio silenciado');
+    }
+
+    function playGeigerPulse() {
+      if (!soundEnabled) return;
+      ensureAudioCtx();
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(1100 + Math.random() * 1600, now);
+      gain.gain.setValueAtTime(0.065, now);
+      gain.gain.exponentialRampToValueAtTime(0.0007, now + 0.015);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.018);
+    }
+
+    function scheduleGeigerBurstLoop() {
+      clearTimeout(geigerBurstTimeout);
+      if (gameState.answered || gameState.timeLeft <= 0 || !soundEnabled) return;
+
+      const elapsed = Math.max(0, Math.min(20, 20 - gameState.timeLeft));
+      const progress = elapsed / 19;
+      const cps = 3 + Math.pow(progress, 1.7) * 32;
+      const avgIntervalMs = Math.max(28, Math.round(1000 / cps));
+      const jitterMs = Math.max(15, Math.round(avgIntervalMs * (0.55 + Math.random() * 0.9)));
+
+      geigerBurstTimeout = setTimeout(() => {
+        if (!gameState.answered && gameState.timeLeft > 0 && soundEnabled) {
+          playGeigerPulse();
+          if (cps > 18 && Math.random() < 0.45) {
+            setTimeout(() => {
+              if (!gameState.answered && gameState.timeLeft > 0 && soundEnabled) {
+                playGeigerPulse();
+              }
+            }, Math.max(12, Math.round(jitterMs * 0.4)));
+          }
+          scheduleGeigerBurstLoop();
+        }
+      }, jitterMs);
+    }
+
+    function startIndustrialSiren() {
+      if (!soundEnabled || sirenOsc) return;
+      ensureAudioCtx();
+      if (!audioCtx) return;
+
+      const now = audioCtx.currentTime;
+      sirenOsc = audioCtx.createOscillator();
+      sirenLfo = audioCtx.createOscillator();
+      const lfoGain = audioCtx.createGain();
+      sirenGain = audioCtx.createGain();
+
+      sirenOsc.type = 'sawtooth';
+      sirenOsc.frequency.setValueAtTime(760, now);
+
+      sirenLfo.type = 'sine';
+      sirenLfo.frequency.setValueAtTime(3.2, now);
+      lfoGain.gain.setValueAtTime(240, now);
+
+      sirenGain.gain.setValueAtTime(0.14, now);
+
+      sirenLfo.connect(lfoGain);
+      lfoGain.connect(sirenOsc.frequency);
+      sirenOsc.connect(sirenGain);
+      sirenGain.connect(audioCtx.destination);
+
+      sirenLfo.start(now);
+      sirenOsc.start(now);
+    }
+
+    function stopIndustrialSiren() {
+      try {
+        if (sirenOsc) { sirenOsc.stop(); sirenOsc.disconnect(); }
+      } catch (e) {}
+      try {
+        if (sirenLfo) { sirenLfo.stop(); sirenLfo.disconnect(); }
+      } catch (e) {}
+      try {
+        if (sirenGain) { sirenGain.disconnect(); }
+      } catch (e) {}
+      sirenOsc = null;
+      sirenLfo = null;
+      sirenGain = null;
+    }
+
+    function playExplosionSound() {
+      if (!soundEnabled) return;
+      ensureAudioCtx();
+      if (!audioCtx) return;
+
+      const sampleRate = audioCtx.sampleRate;
+      const duration = 1.25;
+      const frameCount = Math.floor(sampleRate * duration);
+      const buffer = audioCtx.createBuffer(1, frameCount, sampleRate);
+      const data = buffer.getChannelData(0);
+
+      for (let i = 0; i < frameCount; i++) {
+        const env = Math.pow(1 - i / frameCount, 1.75);
+        data[i] = (Math.random() * 2 - 1) * env;
+      }
+
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(480, audioCtx.currentTime);
+      filter.frequency.exponentialRampToValueAtTime(48, audioCtx.currentTime + duration);
+
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0.42, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      noise.start();
+    }
+
+    function stopSoundEffects() {
+      clearTimeout(geigerBurstTimeout);
+      geigerBurstTimeout = null;
+      stopIndustrialSiren();
+    }
+
+    function stopGameTimers() {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+      stopSoundEffects();
+    }
+
+    function startRadiationShow() {
+      ensureAudioCtx();
+      stopGameTimers();
+      const shuffledQuestions = [...rawRadiationQuestions]
+        .sort(() => Math.random() - 0.5)
+        .map(shuffleQuestionOptions);
+
+      gameState = {
+        deck: shuffledQuestions,
+        index: 0,
+        score: 0,
+        timeLeft: 20,
+        answered: false
+      };
+      renderCurrentQuestion();
+    }
+
+    function renderCurrentQuestion() {
+      stopGameTimers();
+      const total = gameState.deck.length;
+      if (gameState.index >= total) {
+        document.getElementById('hudQuestion').textContent = total + ' / ' + total;
+        document.getElementById('hudTimer').classList.remove('timer-danger');
+        document.getElementById('gameArena').innerHTML =
+          '<h3>Fim do SHOW DA RADIAÇÃO!</h3>' +
+          '<p>Pontuação final: <strong>' + gameState.score + '</strong> pontos em ' + total + ' perguntas.</p>' +
+          '<button type="button" class="action-btn gold" style="margin-top:10px;" onclick="startRadiationShow()">Jogar Novamente</button>';
+        return;
+      }
+
+      const item = gameState.deck[gameState.index];
+      gameState.timeLeft = 20;
+      gameState.answered = false;
+
+      document.getElementById('hudQuestion').textContent = (gameState.index + 1) + ' / ' + total;
+      document.getElementById('hudScore').textContent = gameState.score;
+      const timerEl = document.getElementById('hudTimer');
+      timerEl.textContent = '20s';
+      timerEl.classList.remove('timer-danger');
+
+      const optsHtml = item.opts.map((opt, idx) =>
+        '<button type="button" class="option-btn" onclick="selectAnswer(' + idx + ')">' + String.fromCharCode(65 + idx) + ') ' + opt + '</button>'
+      ).join('');
+
+      document.getElementById('gameArena').innerHTML =
+        '<p style="color:#9eb2cc; font-size:0.84rem; font-weight:700; margin-bottom:6px;">PERGUNTA ' + (gameState.index + 1) + ' DE ' + total + '</p>' +
+        '<h3>' + item.q + '</h3>' +
+        '<div style="margin-top:12px;">' + optsHtml + '</div>' +
+        '<div id="questionFeedback" style="margin-top:10px;"></div>';
+
+      scheduleGeigerBurstLoop();
+
+      countdownInterval = setInterval(() => {
+        if (gameState.answered) return;
+        gameState.timeLeft -= 1;
+        timerEl.textContent = Math.max(0, gameState.timeLeft) + 's';
+
+        if (gameState.timeLeft <= 5 && gameState.timeLeft > 0) {
+          timerEl.classList.add('timer-danger');
+          startIndustrialSiren();
+        }
+
+        if (gameState.timeLeft <= 0) {
+          stopGameTimers();
+          gameState.answered = true;
+          timerEl.classList.remove('timer-danger');
+          playExplosionSound();
+          lockOptions(-1, true);
+        }
+      }, 1000);
+    }
+
+    function selectAnswer(chosenIdx) {
+      if (gameState.answered) return;
+      gameState.answered = true;
+      stopGameTimers();
+      document.getElementById('hudTimer').classList.remove('timer-danger');
+      lockOptions(chosenIdx, false);
+    }
+
+    function lockOptions(chosenIdx, timedOut) {
+      const item = gameState.deck[gameState.index];
+      const btns = document.querySelectorAll('#gameArena .option-btn');
+      btns.forEach((b, idx) => {
+        b.disabled = true;
+        if (idx === item.ans) b.classList.add('correct');
+        if (idx === chosenIdx && idx !== item.ans) b.classList.add('wrong');
+      });
+
+      const isCorrect = !timedOut && chosenIdx === item.ans;
+      if (isCorrect) {
+        gameState.score += 100 + gameState.timeLeft * 5;
+        document.getElementById('hudScore').textContent = gameState.score;
+      }
+
+      const statusMsg = timedOut
+        ? '<div class="sim-status status-penetrating">💥 TEMPO ESGOTADO! Resposta correta: ' + String.fromCharCode(65 + item.ans) + ') ' + item.opts[item.ans] + '</div>'
+        : (isCorrect
+          ? '<div class="sim-status status-blocked">✅ Resposta correta!</div>'
+          : '<div class="sim-status status-attenuated">❌ Resposta incorreta. Correta: ' + String.fromCharCode(65 + item.ans) + ') ' + item.opts[item.ans] + '</div>');
+
+      document.getElementById('questionFeedback').innerHTML =
+        statusMsg +
+        '<p style="margin-top:10px;">' + item.exp + '</p>' +
+        '<button type="button" class="action-btn" style="margin-top:12px;" onclick="nextQuestion()">Próxima Pergunta</button>';
+    }
+
+    function nextQuestion() {
+      gameState.index += 1;
+      renderCurrentQuestion();
+    }
+
+    // =========================================================================
+    // TRAJETÓRIA DO AUTOR (Texto editável + base da apostila + mídia local)
+    // =========================================================================
+    const BIO_KEY = 'nbqr_autor_bio_v1';
+
+    function insertApostilaAuthorDraft() {
+      const draft = [
+        '1° SG-FN-ENF Almeida — Proposta técnico-operacional e material didático em Defesa NBQR (vetor radiológico), dosimetria retrospectiva fortuita e atendimento pré-hospitalar/operacional.',
+        'Experiência e vivência associadas ao Batalhão de Defesa Nuclear, Biológica, Química e Radiológica (BtIDefNBQR) de Aramar e ao Laboratório de Enriquecimento Isotópico do Centro Tecnológico da Marinha em São Paulo (CTMSP), com articulação técnico-operacional voltada ao Centro de Medicina Operativa da Marinha (C-MOPM).',
+        'Material concebido para treinamento e orientação de profissionais de saúde (médicos, enfermeiros, técnicos de enfermagem, Forças Armadas, Forças Auxiliares, SAMU e APH), subordinado à avaliação e validação formais das instâncias competentes.'
+      ].join('\n');
+      document.getElementById('authorBioInput').value = draft;
+      showToast('Base da apostila inserida no campo');
+    }
+
+    function saveAuthorBio() {
+      const val = document.getElementById('authorBioInput').value;
+      try { localStorage.setItem(BIO_KEY, val); } catch (e) {}
+      showToast('Trajetória salva neste navegador');
+    }
+
+    function clearAuthorBio() {
+      document.getElementById('authorBioInput').value = '';
+      try { localStorage.removeItem(BIO_KEY); } catch (e) {}
+      showToast('Campo da trajetória limpo');
+    }
+
+    function handleAuthorMedia(event) {
+      const files = Array.from(event.target.files || []);
+      const gallery = document.getElementById('authorMediaGallery');
+      files.forEach(file => {
+        const url = URL.createObjectURL(file);
+        const card = document.createElement('div');
+        card.className = 'media-item';
+        if (file.type.startsWith('video/')) {
+          card.innerHTML = '<video src="' + url + '" controls></video><p style="font-size:0.78rem; margin-top:6px; color:#9eb2cc;">' + file.name + '</p>';
+        } else {
+          card.innerHTML = '<img src="' + url + '" alt="' + file.name + '"/><p style="font-size:0.78rem; margin-top:6px; color:#9eb2cc;">' + file.name + '</p>';
+        }
+        gallery.appendChild(card);
+      });
+      if (files.length) showToast(files.length + ' arquivo(s) adicionado(s) à galeria');
+    }
+
+    // Inicialização completa
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        const saved = localStorage.getItem(BIO_KEY);
+        if (saved !== null) {
+          document.getElementById('authorBioInput').value = saved;
+        }
+      } catch (e) {}
+
+      updateM1RealtimeSim();
+      renderNuclideSelector();
+      renderMoucheComparison();
+      updateTcccSim();
+      evaluateMopp();
+      buildAlphabetBar();
+      renderGlossary();
+    });
+  </script>
+</body>
+</html>
+
